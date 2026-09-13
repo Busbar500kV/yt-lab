@@ -58,7 +58,7 @@ class MailTransport(Protocol):
 
 class SMTPTransport:
     def send(self, message: EmailMessage, config: dict[str, Any]) -> dict[str, Any]:
-        password_path = Path(config["password_path"])
+        password_path = Path(config["password_path"]).expanduser()
         _private_file(password_path, "SMTP password file")
         password = password_path.read_text(encoding="utf-8").strip()
         with smtplib.SMTP(config["smtp_server"], int(config["smtp_port"]), timeout=60) as smtp:
