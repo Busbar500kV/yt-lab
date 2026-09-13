@@ -1,7 +1,9 @@
 # Animated feature highlighter demonstration
 
-Run ID: `fh-20260913-669ef5e`  
-Rendered tool commit: `669ef5ec244f`  
+Run ID: `fh-20260913-669ef5e`
+
+Rendered tool commit: `669ef5ec244f`
+
 Review-delivery code after owner-recipient hardening: `0b087f5810dd`
 
 ## Status
