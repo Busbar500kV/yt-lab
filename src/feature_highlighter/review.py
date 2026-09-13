@@ -102,6 +102,7 @@ def package_review(
         raise RuntimeError("pending review queue already exceeds 50 MiB; send or explicitly discard it first")
     bundle.mkdir(parents=True, mode=0o700)
     samples: list[dict[str, Any]] = []
+    master_manifests: list[dict[str, Any]] = []
     try:
         for index, run_dir in enumerate(run_dirs, start=1):
             manifest_path = run_dir / "manifest.json"
@@ -123,6 +124,17 @@ def package_review(
                     "label": label,
                     "feature": feature,
                     "dimensions": f"{width}x{height}",
+                }
+            )
+            reproduction = bundle / "reproduction"
+            reproduction.mkdir(exist_ok=True)
+            archived_manifest = reproduction / f"{index:02d}-{slug}-manifest.json"
+            shutil.copyfile(manifest_path, archived_manifest)
+            master_manifests.append(
+                {
+                    "filename": archived_manifest.name,
+                    "sha256": sha256_file(archived_manifest),
+                    "master_output_sha256": manifest["output_hashes"]["highlight.mp4"],
                 }
             )
         sheet = bundle / "03-feature-highlighter-contact-sheet.jpg"
@@ -164,6 +176,7 @@ The ignored lab runtime keeps only the latest successfully emailed compact bundl
             "commit": commit,
             "reproduce_command": reproduce_command,
             "sample_run_dirs": [str(path.resolve()) for path in run_dirs],
+            "master_manifests": master_manifests,
             "attachments": [
                 {"filename": path.name, "sha256": sha256_file(path), "bytes": path.stat().st_size}
                 for path in attachments

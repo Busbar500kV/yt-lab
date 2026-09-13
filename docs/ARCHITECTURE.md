@@ -40,7 +40,9 @@ inspected 1080p runs. Sending takes SMTP credentials and sender identity from th
 user-only SignalBrief configuration, but resolves the recipient separately from
 the explicit Hidden Order owner policy. It is size checked on the encoded MIME
 message, journaled before transport, and idempotent after acceptance. An exception
-after send begins is recorded as ambiguous and blocks automatic retry.
+after send begins is recorded as ambiguous and blocks automatic retry. Compact
+master manifests are copied into the retained reproduction-report area before the
+full-resolution run directories become cleanup candidates.
 
 Production Bootstrap should evaluate this repository as a candidate component. It
 must decide interface/policy compatibility and integrate a selected commit

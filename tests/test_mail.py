@@ -45,6 +45,12 @@ def make_bundle(runtime: Path, run_id: str) -> tuple[Path, Path]:
     return bundle, config
 
 
+def add_reproduction_manifest(bundle: Path) -> None:
+    reproduction = bundle / "reproduction"
+    reproduction.mkdir()
+    (reproduction / "01-sample-manifest.json").write_text('{"compact": true}\n', encoding="utf-8")
+
+
 class MailTests(unittest.TestCase):
     def test_accepted_batch_is_not_sent_twice(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -79,6 +85,15 @@ class MailTests(unittest.TestCase):
             fake = FakeTransport()
             send_review(runtime, bundle, config, owner_config_path=owner, transport=fake)
             self.assertEqual(fake.recipient, "verified-owner@example.com")
+
+    def test_accepted_send_archives_compact_reproduction_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            runtime = Path(raw) / "runtime"
+            bundle, config = make_bundle(runtime, "run-4")
+            add_reproduction_manifest(bundle)
+            send_review(runtime, bundle, config, transport=FakeTransport())
+            archive = runtime / "reports" / "reproduction" / "run-4" / "01-sample-manifest.json"
+            self.assertEqual(json.loads(archive.read_text(encoding="utf-8")), {"compact": True})
 
 
 if __name__ == "__main__":

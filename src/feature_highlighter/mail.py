@@ -163,6 +163,13 @@ def send_review(
         run_id=run_id,
         metadata={"accepted_at": record["accepted_at"]},
     )
+    reproduction = sent / "reproduction"
+    if reproduction.is_dir():
+        archive = runtime_root / "reports" / "reproduction" / run_id
+        archive.mkdir(parents=True, exist_ok=True)
+        for manifest in reproduction.glob("*-manifest.json"):
+            target = archive / manifest.name
+            target.write_bytes(manifest.read_bytes())
     for raw_path in package.get("sample_run_dirs", []):
         path = Path(raw_path)
         try:
