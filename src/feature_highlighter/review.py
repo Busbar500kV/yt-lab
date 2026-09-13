@@ -92,13 +92,15 @@ def package_review(
 ) -> dict[str, Any]:
     runtime_root = runtime_root.resolve()
     pending_root = runtime_root / "mail" / "pending"
+    pending_root.mkdir(parents=True, exist_ok=True)
+    pending_root.chmod(0o700)
     bundle = pending_root / run_id
     if bundle.exists():
         raise RuntimeError(f"pending review package already exists: {bundle}")
     current_pending = sum(path_size(path) for path in pending_root.iterdir()) if pending_root.exists() else 0
     if current_pending > DEFAULT_PENDING_CAP:
         raise RuntimeError("pending review queue already exceeds 50 MiB; send or explicitly discard it first")
-    bundle.mkdir(parents=True)
+    bundle.mkdir(parents=True, mode=0o700)
     samples: list[dict[str, Any]] = []
     try:
         for index, run_dir in enumerate(run_dirs, start=1):

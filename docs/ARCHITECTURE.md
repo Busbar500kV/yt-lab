@@ -36,9 +36,11 @@ reports before/after disk use. Seven-day deletion happens only on a later
 invocation; there is no scheduler.
 
 Mail packaging creates 720p review transcodes and a contact sheet from already
-inspected 1080p runs. Sending is configured-owner-only, size checked on the encoded
-MIME message, journaled before transport, and idempotent after acceptance. An
-exception after send begins is recorded as ambiguous and blocks automatic retry.
+inspected 1080p runs. Sending takes SMTP credentials and sender identity from the
+user-only SignalBrief configuration, but resolves the recipient separately from
+the explicit Hidden Order owner policy. It is size checked on the encoded MIME
+message, journaled before transport, and idempotent after acceptance. An exception
+after send begins is recorded as ambiguous and blocks automatic retry.
 
 Production Bootstrap should evaluate this repository as a candidate component. It
 must decide interface/policy compatibility and integrate a selected commit

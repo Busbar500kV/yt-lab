@@ -14,9 +14,11 @@ class FakeTransport:
     def __init__(self, *, fail: bool = False) -> None:
         self.calls = 0
         self.fail = fail
+        self.recipient = None
 
     def send(self, message, config):
         self.calls += 1
+        self.recipient = message["To"]
         if self.fail:
             raise TimeoutError("simulated uncertain response")
         return {"accepted": True, "message_identifier": message["Message-ID"]}
@@ -67,6 +69,16 @@ class MailTests(unittest.TestCase):
             self.assertEqual(fake.calls, 1)
             record = json.loads((runtime / "mail" / "records" / "run-2.json").read_text(encoding="utf-8"))
             self.assertEqual(record["status"], "ambiguous")
+
+    def test_explicit_owner_config_overrides_transport_default_recipient(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            runtime = Path(raw) / "runtime"
+            bundle, config = make_bundle(runtime, "run-3")
+            owner = runtime / "owner.json"
+            owner.write_text(json.dumps({"owner_email": "verified-owner@example.com"}), encoding="utf-8")
+            fake = FakeTransport()
+            send_review(runtime, bundle, config, owner_config_path=owner, transport=fake)
+            self.assertEqual(fake.recipient, "verified-owner@example.com")
 
 
 if __name__ == "__main__":

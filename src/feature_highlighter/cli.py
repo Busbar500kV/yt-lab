@@ -30,6 +30,7 @@ def _parser() -> argparse.ArgumentParser:
     send_parser.add_argument("bundle", type=Path)
     send_parser.add_argument("--runtime-root", type=Path, default=Path("runtime"))
     send_parser.add_argument("--config", type=Path, default=Path("/home/busbar/.config/signalbrief/email.json"))
+    send_parser.add_argument("--owner-config", type=Path, default=Path("/home/busbar/yt/config/policy.json"))
     return parser
 
 
@@ -64,7 +65,10 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(package, indent=2, sort_keys=True))
             return 0
         if args.command == "send-review":
-            result = send_review(args.runtime_root, args.bundle, args.config)
+            result = send_review(
+                args.runtime_root, args.bundle, args.config,
+                owner_config_path=args.owner_config,
+            )
             print(json.dumps(result, indent=2, sort_keys=True))
             return 0
     except (SpecError, RuntimeError, RuntimeSafetyError) as exc:

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import mimetypes
 import smtplib
+import ssl
 from datetime import datetime, timezone
 from email.message import EmailMessage
 from email.utils import make_msgid
@@ -29,9 +30,26 @@ def _now() -> str:
 
 def _atomic_json(path: Path, data: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    path.parent.chmod(0o700)
     temporary = path.with_suffix(".tmp")
     temporary.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     temporary.replace(path)
+    path.chmod(0o600)
+
+
+def resolve_owner_recipient(owner_config_path: Path) -> str:
+    policy = json.loads(owner_config_path.read_text(encoding="utf-8"))
+    owner = policy.get("owner_email")
+    if not owner and isinstance(policy.get("soundtrack_intake"), dict):
+        owner = policy["soundtrack_intake"].get("owner_mailbox")
+    if not isinstance(owner, str) or "@" not in owner or not owner.strip():
+        raise RuntimeError("explicit owner mailbox is missing from owner configuration")
+    return owner.strip()
+
+
+def _private_file(path: Path, label: str) -> None:
+    if not path.is_file() or path.stat().st_mode & 0o077:
+        raise RuntimeError(f"{label} is missing or has unsafe permissions")
 
 
 class MailTransport(Protocol):
@@ -40,10 +58,12 @@ class MailTransport(Protocol):
 
 class SMTPTransport:
     def send(self, message: EmailMessage, config: dict[str, Any]) -> dict[str, Any]:
-        password = Path(config["password_path"]).read_text(encoding="utf-8").strip()
+        password_path = Path(config["password_path"])
+        _private_file(password_path, "SMTP password file")
+        password = password_path.read_text(encoding="utf-8").strip()
         with smtplib.SMTP(config["smtp_server"], int(config["smtp_port"]), timeout=60) as smtp:
             smtp.ehlo()
-            smtp.starttls()
+            smtp.starttls(context=ssl.create_default_context())
             smtp.ehlo()
             smtp.login(config["username"], password)
             refused = smtp.send_message(message)
@@ -81,6 +101,7 @@ def send_review(
     bundle: Path,
     config_path: Path,
     *,
+    owner_config_path: Path | None = None,
     transport: MailTransport | None = None,
 ) -> dict[str, Any]:
     runtime_root = runtime_root.resolve()
@@ -92,7 +113,11 @@ def send_review(
             return {**existing, "duplicate_skipped": True}
         if existing.get("status") in {"sending", "ambiguous"}:
             raise RuntimeError("previous send outcome is ambiguous; resolve it explicitly before retrying")
+    if transport is None:
+        _private_file(config_path, "SMTP configuration")
     config = json.loads(config_path.read_text(encoding="utf-8"))
+    if owner_config_path is not None:
+        config = {**config, "to_addr": resolve_owner_recipient(owner_config_path)}
     message, details = build_message(bundle, config)
     package = details["package"]
     run_id = package["run_id"]
@@ -128,6 +153,7 @@ def send_review(
     _atomic_json(record_path, record)
     sent = runtime_root / "mail" / "sent" / run_id
     sent.parent.mkdir(parents=True, exist_ok=True)
+    sent.parent.chmod(0o700)
     bundle.rename(sent)
     unregister_owned(runtime_root, bundle)
     register_owned(
