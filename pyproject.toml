@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hidden-order-feature-highlighter"
+version = "0.1.0"
+description = "Animate an explicit feature highlight over a still image"
+requires-python = ">=3.10"
+dependencies = ["Pillow>=10,<12"]
+
+[project.scripts]
+feature-highlighter = "feature_highlighter.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

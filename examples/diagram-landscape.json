@@ -1,0 +1,51 @@
+{
+  "source": {
+    "path": "../runtime/source_cache/steam-engine-psf.png",
+    "coordinate_space": "oriented_pixels",
+    "identity": "Pearson Scott Foresman line-art diagram of a steam engine",
+    "reuse": {
+      "basis": "Public domain dedication by Pearson Scott Foresman",
+      "evidence_url": "https://commons.wikimedia.org/wiki/File:Steam_engine_(PSF).png",
+      "attribution": "Pearson Scott Foresman Archives"
+    }
+  },
+  "region": {
+    "type": "polygon",
+    "points": [
+      [1870, 770],
+      [2260, 735],
+      [2500, 475],
+      [2860, 430],
+      [3060, 670],
+      [3085, 1090],
+      [2860, 1320],
+      [2470, 1240],
+      [2220, 1060],
+      [1940, 1015]
+    ]
+  },
+  "editorial": {
+    "feature": "the connecting rod and flywheel assembly",
+    "scene": "The linkage converts the piston's back-and-forth stroke into continuous rotation."
+  },
+  "output": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "duration": 8,
+    "fit": "cover",
+    "anchor": [0.5, 0.0],
+    "crf": 18
+  },
+  "style": {
+    "outline_color": "#00AEEF",
+    "outline_width": 8,
+    "outside_dimming": 0.35
+  },
+  "timing": {
+    "start": 0.7,
+    "reveal": 1.8,
+    "hold": 4.0,
+    "fade": 1.2
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "source": {
+    "path": "../runtime/source_cache/apollo-11-lunar-module.jpg",
+    "coordinate_space": "oriented_pixels",
+    "identity": "NASA AS11-44-6642, Apollo 11 lunar module Eagle, 21 July 1969",
+    "reuse": {
+      "basis": "Public domain: work created solely by NASA",
+      "evidence_url": "https://commons.wikimedia.org/wiki/File:Apollo_11_lunar_module.jpg",
+      "attribution": "NASA / Michael Collins, AS11-44-6642"
+    }
+  },
+  "region": {
+    "type": "rectangle",
+    "x": 995,
+    "y": 770,
+    "width": 175,
+    "height": 125
+  },
+  "editorial": {
+    "feature": "the half-lit Earth above the lunar horizon",
+    "scene": "As Eagle returned from the Moon, Earth appeared as a small world beyond it."
+  },
+  "output": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 24,
+    "duration": 8,
+    "fit": "cover",
+    "anchor": [0.5, 0.5],
+    "crf": 18
+  },
+  "style": {
+    "outline_color": "#FFD84A",
+    "outline_width": 8,
+    "outside_dimming": 0.48
+  },
+  "timing": {
+    "start": 0.8,
+    "reveal": 1.5,
+    "hold": 4.2,
+    "fade": 1.2
+  }
+}
