@@ -298,11 +298,12 @@ def _outline_overlay(
     draw = ImageDraw.Draw(overlay)
     draw.line(scaled, fill=halo, width=halo_width, joint="curve")
     draw.line(scaled, fill=(*color, alpha), width=inner_width, joint="curve")
-    for x, y in (scaled[0], scaled[-1]):
-        halo_radius = halo_width // 2
-        draw.ellipse((x - halo_radius, y - halo_radius, x + halo_radius, y + halo_radius), fill=halo)
-        radius = inner_width // 2
-        draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=(*color, alpha))
+    if fraction < 1.0:
+        for x, y in (scaled[0], scaled[-1]):
+            halo_radius = halo_width // 2
+            draw.ellipse((x - halo_radius, y - halo_radius, x + halo_radius, y + halo_radius), fill=halo)
+            radius = inner_width // 2
+            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=(*color, alpha))
     local = overlay.resize((right - left, bottom - top), Image.Resampling.LANCZOS)
     result = Image.new("RGBA", size, (0, 0, 0, 0))
     result.alpha_composite(local, (left, top))
