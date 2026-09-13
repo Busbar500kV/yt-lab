@@ -271,6 +271,12 @@ def _partial_path(points: list[tuple[float, float]], fraction: float) -> list[tu
     return result
 
 
+def _rounded_vertices(
+    path: list[tuple[int, int]], fraction: float
+) -> list[tuple[int, int]]:
+    return path[:-1] if fraction >= 1.0 else [path[0], path[-1]]
+
+
 def _outline_overlay(
     size: tuple[int, int],
     points: list[tuple[float, float]],
@@ -296,14 +302,15 @@ def _outline_overlay(
     overlay = Image.new("RGBA", ((right - left) * aa, (bottom - top) * aa), (0, 0, 0, 0))
     scaled = [(round((x - left) * aa), round((y - top) * aa)) for x, y in path]
     draw = ImageDraw.Draw(overlay)
+    rounded = _rounded_vertices(scaled, fraction)
     draw.line(scaled, fill=halo, width=halo_width, joint="curve")
+    halo_radius = halo_width // 2
+    for x, y in rounded:
+        draw.ellipse((x - halo_radius, y - halo_radius, x + halo_radius, y + halo_radius), fill=halo)
     draw.line(scaled, fill=(*color, alpha), width=inner_width, joint="curve")
-    if fraction < 1.0:
-        for x, y in (scaled[0], scaled[-1]):
-            halo_radius = halo_width // 2
-            draw.ellipse((x - halo_radius, y - halo_radius, x + halo_radius, y + halo_radius), fill=halo)
-            radius = inner_width // 2
-            draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=(*color, alpha))
+    radius = inner_width // 2
+    for x, y in rounded:
+        draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=(*color, alpha))
     local = overlay.resize((right - left, bottom - top), Image.Resampling.LANCZOS)
     result = Image.new("RGBA", size, (0, 0, 0, 0))
     result.alpha_composite(local, (left, top))

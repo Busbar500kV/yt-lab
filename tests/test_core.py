@@ -10,6 +10,8 @@ from PIL import Image
 
 from feature_highlighter.core import (
     SpecError,
+    _outline_overlay,
+    _rounded_vertices,
     compute_transform,
     load_spec,
     render,
@@ -43,6 +45,15 @@ class GeometryTests(unittest.TestCase):
             source_region_points({"type": "rectangle", "x": 2, "y": 3, "width": 5, "height": 7}),
             [(2, 3), (7, 3), (7, 10), (2, 10)],
         )
+
+    def test_completed_outline_has_no_unique_endpoint_marker(self) -> None:
+        closed = [(20, 20), (80, 20), (80, 80), (20, 80), (20, 20)]
+        self.assertEqual(_rounded_vertices(closed, 1.0), closed[:-1])
+        self.assertEqual(_rounded_vertices(closed[:3], 0.5), [closed[0], closed[2]])
+        overlay = _outline_overlay(
+            (100, 100), closed[:-1], 1.0, 1.0, (255, 216, 74), 8, 4
+        )
+        self.assertGreater(overlay.getchannel("A").getbbox()[2], 80)
 
     def test_exif_orientation_defines_coordinate_space(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
