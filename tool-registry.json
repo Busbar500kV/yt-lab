@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-09-14",
+  "tools": [
+    {
+      "tool_id": "animated-feature-highlighter",
+      "tool_directory": "src/feature_highlighter",
+      "skill_directory": "skills/animated-feature-highlighter",
+      "lab_version": "0.1.0",
+      "tested_commit": "669ef5ec244fdca628ca2708c4f44707e7cdc458",
+      "selected_lab_commit": "f4103b7237692f008dca5b092049bd10e76f913f",
+      "release_tag": "tool/animated-feature-highlighter/v0.1.0",
+      "status": "integrated",
+      "production_integration_commit": "74383dbb474581052868e9767b889e32cffd980d",
+      "date_integrated": "2026-09-14",
+      "bootstrap_handoff_path": "docs/BOOTSTRAP_HANDOFF.md",
+      "layout_note": "Released before the per-tool tools/<tool-id>/ layout was established; preserve its existing paths.",
+      "future_handoff_policy": "Exclude this capability from later tool handoffs and never request reintegration."
+    }
+  ]
+}

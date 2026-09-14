@@ -1,6 +1,20 @@
 # Architecture and integration boundary
 
-## Contract
+## Independent tool lifecycle
+
+`tool-registry.json` is the authoritative compact catalogue. Each new tool gets a
+stable ID, independent `tools/<tool-id>/` implementation, matching skill, tests,
+fixtures, runtime namespace, version, and tool-scoped Bootstrap handoff. A handoff
+offers only that tool and tells Bootstrap to inspect production and skip anything
+already present; it never asks Bootstrap to synchronize the lab.
+
+Shared code is introduced only after two implemented tools demonstrate the same
+stable need, in a separate commit with regression coverage for every consumer.
+Integrated tools are not reorganized to fit newer conventions. The animated
+feature highlighter is the one legacy-layout capability and remains at its recorded
+paths.
+
+## Released highlighter contract
 
 The JSON input has six small sections:
 
@@ -44,7 +58,6 @@ after send begins is recorded as ambiguous and blocks automatic retry. Compact
 master manifests are copied into the retained reproduction-report area before the
 full-resolution run directories become cleanup candidates.
 
-Production Bootstrap should evaluate this repository as a candidate component. It
-must decide interface/policy compatibility and integrate a selected commit
-individually. Nothing here imports production code, mutates a production service,
-runs a release workflow, or represents owner acceptance or production integration.
+The highlighter was integrated by production commit `74383dbb474581052868e9767b889e32cffd980d`.
+Its historical handoff is closed and must not be reused by a later tool. Lab work
+does not mutate production repositories or running services.

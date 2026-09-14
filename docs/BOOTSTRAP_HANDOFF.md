@@ -1,6 +1,10 @@
 # Production Bootstrap handoff
 
-Candidate: animated feature highlighter `0.1.0`.
+Historical closed handoff: animated feature highlighter `0.1.0`.
+
+Status: integrated on 2026-09-14 by production commit
+`74383dbb474581052868e9767b889e32cffd980d`. Do not resubmit this handoff, ask
+Bootstrap to reintegrate the capability, or include it in another tool's handoff.
 
 - Runtime dependencies: Python 3.10+, Pillow 10–11, FFmpeg/ffprobe with libx264.
 - Examples: `examples/photo-portrait.json` and
@@ -15,6 +19,6 @@ Candidate: animated feature highlighter `0.1.0`.
   production mail should remain wholly separate from this lab sender.
 - Known boundary: explicit static regions only; no segmentation or video tracking.
 
-Bootstrap should evaluate the tested commit recorded in the demo summary, rerun the
-examples, and select/integrate a version independently. Lab test or SMTP status is
-not production readiness.
+Bootstrap selected lab commit `f4103b7237692f008dca5b092049bd10e76f913f` and
+recorded renderer revision `669ef5ec244fdca628ca2708c4f44707e7cdc458` during
+the completed integration. This record remains only for provenance.

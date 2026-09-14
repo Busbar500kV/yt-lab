@@ -14,8 +14,12 @@ Review-delivery/manifest-retention code: `bd066a925221`
   frames were inspected. Both clips also decoded end-to-end at real-time pacing.
 - Emailed for owner review: SMTP accepted one 835,931-byte MIME message. This is
   transport acceptance only, not confirmed inbox delivery or owner review.
-- Owner accepted: no evidence yet.
-- Production integrated: no; Bootstrap evaluation remains separate.
+- Owner reviewed: yes; confirmed by the owner on 2026-09-14. This records review,
+  not approval of any episode or release.
+- Production integrated: yes; production commit
+  `74383dbb474581052868e9767b889e32cffd980d` on 2026-09-14 selected lab commit
+  `f4103b7237692f008dca5b092049bd10e76f913f` and renderer revision
+  `669ef5ec244fdca628ca2708c4f44707e7cdc458`.
 
 The headless host did not provide direct full-speed visual playback. Sampled-frame
 inspection and real-time decoder pacing are recorded as separate evidence. The

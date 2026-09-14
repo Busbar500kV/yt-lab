@@ -2,8 +2,18 @@
 
 - Scope all code, caches, renders, mail state, and cleanup to this repository.
   Never modify production repositories or services.
-- Work on `agent/codex-yt-lab`. Use `python -m unittest discover -s tests -v`
-  for the focused test suite and `python -m feature_highlighter` for the CLI.
+- Work on `agent/codex-yt-lab`. Read `tool-registry.json`, Git history, tags, and
+  the relevant tool-scoped handoff before starting a cycle.
+- Treat registry entries with status `integrated` as immutable released lab
+  capabilities. Do not rebuild, rename, reorganize, resubmit, or incidentally
+  refactor them. Do not include them in a later Bootstrap handoff.
+- Each new capability uses a new stable ID with implementation under
+  `tools/<tool-id>/`, a skill at `skills/<tool-id>/SKILL.md`, tool-local tests and
+  fixtures, ignored runtime output, its own version, handoff, catalogue entry,
+  and lifecycle status.
+- Add shared code only after two implemented tools need the same stable behavior.
+  Extract it in a separate commit, document all consumers, and rerun every
+  affected tool's regression tests.
 - Runtime files live under ignored `runtime/`. Acquired media and private mail
   records never enter Git.
 - Run `python -m feature_highlighter cleanup` before and after render/mail work.

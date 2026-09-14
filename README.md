@@ -1,6 +1,12 @@
-# yt-lab animated feature highlighter
+# yt-lab
 
-This repository contains one reusable lab tool: it animates a clean outline around
+This repository develops independent, reusable tools for Hidden Order. The
+authoritative lifecycle catalogue is `tool-registry.json`. Integrated entries are
+released lab capabilities and are excluded from subsequent tool handoffs.
+
+## Released capability: animated feature highlighter
+
+Version `0.1.0` is integrated in production. It animates a clean outline around
 an explicitly supplied rectangle or polygon in a still image, optionally dimming
 the area outside it. It preserves oriented source geometry through uniform resize,
 source-derived padding, and explicit cover crops, and refuses a crop that hides any
@@ -42,5 +48,6 @@ PYTHONPATH=src python3 -m feature_highlighter cleanup --dry-run
 
 Status terms are intentionally separate: tests can pass; specific frames and
 animation samples can be visually inspected; SMTP can accept a lab review package;
-the owner can later accept it; and Production Bootstrap can later integrate a
-tested version. None of those states implies the next.
+the owner can review it; and Production Bootstrap can integrate a tested version.
+The registry records the highlighter's completed integration; none of these states
+is inferred for a future tool.
