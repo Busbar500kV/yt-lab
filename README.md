@@ -54,9 +54,11 @@ is inferred for a future tool.
 
 ## Candidate capability: geographic scene renderer
 
-`geographic-scene-renderer` 0.1.0 is an independent candidate that creates
-sourced world-to-place, terrain, and place-identification scenes in native
-landscape or portrait geometry. It is not a mandatory intro and is not integrated
+`geographic-scene-renderer` 0.2.0 is an independent candidate with explicit
+Earth-to-location and location-to-location modes, fixed verified places, a
+six-second ceiling, narration anchors, brief labels, and native landscape or
+portrait composition. Episode Codex chooses scene purpose and timing; maps remain
+scene-specific creative tools rather than mandatory intros. It is not integrated
 into production. Installation, input contract, provider restrictions, and the
 single-scene command are in
 [`tools/geographic-scene-renderer/README.md`](tools/geographic-scene-renderer/README.md).
@@ -64,4 +66,6 @@ single-scene command are in
 Its adapter has no package dependencies of its own. A reproducible installer
 checks out the exact audited God's Eye View revision and installs its locked
 Cesium/Puppeteer runtime below ignored storage. No voice AI, API keys, paid
-services, live tracking, or bundled non-commercial datasets are enabled.
+services, live tracking, or bundled non-commercial datasets are enabled. NASA
+Blue Marble supplies worldwide regional context; USGS remains limited to closer
+contiguous-U.S. views.

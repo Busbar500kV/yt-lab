@@ -1,42 +1,31 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "tool_id": "geographic-scene-renderer",
+  "mode": "earth-to-location",
   "testing": true,
   "editorial": {
-    "purpose": "Deterministic renderer smoke test.",
-    "narration": "A synthetic grid verifies camera timing without a provider request.",
-    "context_note": "TEST FIXTURE — NOT SOURCE EVIDENCE"
+    "purpose": "Deterministic Earth-to-location renderer smoke test.",
+    "narration": "The fixture point establishes the synthetic test location.",
+    "context_note": "TEST FIXTURE — NOT SOURCE EVIDENCE",
+    "anchor": {"text": "fixture point", "intended_placement": "initial-location-introduction", "timeline_reference": "At the first physical-location mention"}
   },
   "geography": {
     "destination_id": "fixture",
-    "locations": [
-      {
-        "id": "fixture",
-        "label": "Fixture point",
-        "lat": 46.2,
-        "lon": -122.18,
-        "source_url": "https://example.invalid/fixture",
-        "verified_on": "2026-10-03"
-      }
-    ]
+    "locations": [{
+      "id": "fixture", "display_label": "Fixture Point", "place_name": "Fixture Point", "country": "Test Fixture", "administrative_region": "Synthetic Grid", "feature_type": "synthetic point",
+      "full_description": "Deterministic synthetic point used only for renderer tests.", "lat": 46.2, "lon": -122.18,
+      "extent": {"west": -122.3, "south": 46.1, "east": -122.05, "north": 46.3},
+      "sources": [{"title": "Tool fixture", "url": "https://example.invalid/fixture", "role": "deterministic coordinate fixture"}],
+      "verification": {"status": "verified", "verified_on": "2026-10-03", "method": "Fixed test value checked by the test suite.", "ambiguity_status": "not-ambiguous", "ambiguity_note": "Synthetic fixture has one defined identity."}
+    }]
   },
-  "providers": {
-    "imagery": "test-grid",
-    "terrain": "ellipsoid",
-    "permitted_layers": ["imagery", "terrain"],
-    "imagery_date": "synthetic fixed fixture"
-  },
-  "camera": {
-    "start": {"lat": 39, "lon": -105, "range_m": 12000000, "heading_deg": 0, "pitch_deg": -90},
-    "destination": {"lat": 46.2, "lon": -122.18, "range_m": 500000, "heading_deg": 5, "pitch_deg": -65},
-    "easing": "cubic-in-out",
-    "timing": {"start_hold_sec": 0.5, "move_sec": 1.5, "hold_sec": 1, "return_sec": 0}
-  },
-  "overlays": [
-    {"type": "marker", "location_id": "fixture", "label": "FIXTURE", "source_url": "https://example.invalid/fixture", "verified": true, "reveal_at_sec": 1.5, "color": "#ffd65a"}
-  ],
-  "caption_safe_zones": [
-    {"id": "lower-third", "x": 0.05, "y": 0.78, "width": 0.9, "height": 0.18}
-  ],
-  "output": {"width": 640, "height": 360, "fps": 15, "duration_sec": 3, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 24}
+  "providers": {"imagery": "test-grid", "terrain": "ellipsoid", "permitted_layers": ["imagery", "terrain"], "imagery_date": "synthetic fixed fixture", "retrieved_on": "2026-10-03"},
+  "camera": {"easing": "cubic-in-out", "keyframes": [
+    {"at_sec": 0, "view": {"lat": 39, "lon": -105, "range_m": 12000000, "heading_deg": 0, "pitch_deg": -90}},
+    {"at_sec": 1.5, "view": {"lat": 46.2, "lon": -122.18, "range_m": 500000, "heading_deg": 5, "pitch_deg": -65}}
+  ]},
+  "destination_label": {"text": "Fixture Point", "reveal_at_sec": 1.5, "fade_in_sec": 0.2, "fade_out_sec": 0, "color": "#ffd65a"},
+  "caption_safe_zones": [{"id": "lower-third", "x": 0.05, "y": 0.8, "width": 0.9, "height": 0.16}],
+  "overlays": [],
+  "output": {"format": "landscape", "width": 640, "height": 360, "fps": 15, "duration_sec": 3, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 24, "capture_slowdown": 2}
 }

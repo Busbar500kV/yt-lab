@@ -26,18 +26,20 @@ async function launch(upstream, cacheDir) {
   const puppeteer = require('puppeteer');
   process.env.PUPPETEER_CACHE_DIR = cacheDir;
   const chrome=await puppeteer.executablePath();
-  const gpuGroup=process.env.GEOGRAPHIC_RENDER_GPU_GROUP;
+  const currentUser=os.userInfo().username;
+  const configuredGpuGroup=process.env.GEOGRAPHIC_RENDER_GPU_GROUP;
+  const autoGpu=fs.existsSync('/dev/dri/renderD128')&&spawnSync('sudo',['-n','-u',currentUser,'-g','render','true']).status===0;
+  const gpuGroup=configuredGpuGroup||(autoGpu?'render':null);
   let executablePath=chrome;let userDataDir;let graphicsMode='software-swiftshader';
-  let args=['--no-sandbox','--disable-setuid-sandbox','--enable-unsafe-swiftshader','--use-angle=swiftshader','--disable-gpu-sandbox','--hide-scrollbars','--autoplay-policy=no-user-gesture-required'];
+  let args=['--no-sandbox','--disable-setuid-sandbox','--enable-unsafe-swiftshader','--use-angle=swiftshader','--disable-gpu-sandbox','--hide-scrollbars','--autoplay-policy=no-user-gesture-required','--disk-cache-size=0','--disable-application-cache'];
   if(gpuGroup){
     if(!/^[a-z_][a-z0-9_-]*$/i.test(gpuGroup))throw new Error('GEOGRAPHIC_RENDER_GPU_GROUP is invalid');
-    const currentUser=os.userInfo().username;
     const launcher=path.join(cacheDir,'gpu-browser-launcher.sh');
     fs.mkdirSync(cacheDir,{recursive:true});
     fs.writeFileSync(launcher,`#!/bin/sh\nexec /usr/bin/sudo -n -u ${currentUser} -g ${gpuGroup} '${chrome.replaceAll("'","'\\''")}' \"$@\"\n`,{mode:0o700});
     userDataDir=path.join(cacheDir,'gpu-profile');fs.mkdirSync(userDataDir,{recursive:true});
     executablePath=launcher;graphicsMode=`hardware-via-group-${gpuGroup}`;
-    args=['--no-sandbox','--disable-setuid-sandbox','--enable-gpu','--ignore-gpu-blocklist','--use-gl=angle','--use-angle=gl-egl','--hide-scrollbars','--autoplay-policy=no-user-gesture-required'];
+    args=['--no-sandbox','--disable-setuid-sandbox','--enable-gpu','--ignore-gpu-blocklist','--use-gl=angle','--use-angle=gl-egl','--hide-scrollbars','--autoplay-policy=no-user-gesture-required','--disk-cache-size=0','--disable-application-cache'];
   }
   const browser=await puppeteer.launch({executablePath,headless:true,userDataDir,args});
   browser.__graphicsMode=graphicsMode;return browser;
@@ -83,7 +85,7 @@ export async function render(specFile, outputDir, options = {}) {
   const upstreamHead=run('git',['rev-parse','HEAD'],{cwd:upstream,encoding:'utf8'}).trim();
   if(upstreamHead!==UPSTREAM_COMMIT) throw new Error(`upstream commit mismatch: expected ${UPSTREAM_COMMIT}, got ${upstreamHead}`);
   const cesiumDir=path.join(upstream,'node_modules','cesium','Build','Cesium'); exists(path.join(cesiumDir,'Cesium.js'),'Cesium browser build');
-  const server=await startViewerServer({viewerDir:path.join(import.meta.dirname,'..','viewer'),cesiumDir,proxyCacheDir:path.join(runtimeRoot,'tile-cache'),imageryUrl:spec.providers.imagery.url,terrainUrl:spec.providers.terrain.url});
+  const server=await startViewerServer({viewerDir:path.join(import.meta.dirname,'..','viewer'),cesiumDir,proxyCacheDir:path.join(runtimeRoot,'tile-cache'),imageryUrl:spec.providers.imagery.proxy&&spec.providers.imagery.kind!=='url-template'?spec.providers.imagery.url:null,imageryTemplate:spec.providers.imagery.proxy&&spec.providers.imagery.kind==='url-template'?spec.providers.imagery.url:null,terrainUrl:spec.providers.terrain.url});
   let browser; const mp4=path.join(outputDir,'scene.mp4'); let setup; let capture;
   const stderr=[]; const consoleMessages=[]; let peakRss=processPeakRssKb();
   try {
@@ -92,17 +94,18 @@ export async function render(specFile, outputDir, options = {}) {
     page.on('console',(message)=>consoleMessages.push(`${message.type()}: ${message.text()}`)); page.on('pageerror',(error)=>stderr.push(error.message));
     await page.goto(server.url,{waitUntil:'networkidle0',timeout:60000});
     const pageSpec=structuredClone(spec);
-    if(pageSpec.providers.imagery.url)pageSpec.providers.imagery.url=server.imageryProxy;
+    if(pageSpec.providers.imagery.url&&pageSpec.providers.imagery.proxy)pageSpec.providers.imagery.url=pageSpec.providers.imagery.kind==='url-template'?server.imageryTemplateProxy:server.imageryProxy;
     if(pageSpec.providers.terrain.url)pageSpec.providers.terrain.url=server.terrainProxy;
     try {
       setup=await page.evaluate((value)=>window.geoScene.setup(value),pageSpec);
     } catch(error) {
-      throw new Error(`provider scene setup failed: ${error.message}`);
+      throw new Error(`provider scene setup failed: ${error.message}; console=${consoleMessages.slice(-8).join(' | ')}; proxy=${JSON.stringify(server.stats())}`);
     }
     setup.launch_mode=browser.__graphicsMode;setup.browser_version=await browser.version();
     const point=await page.evaluate(()=>window.geoScene.projectDestination());
     if(!point||point.x<0||point.y<0||point.x>spec.output.width||point.y>spec.output.height) throw new Error('destination evidence point is not visible in final composition');
-    for(const zone of spec.caption_safe_zones){const x=point.x/spec.output.width,y=point.y/spec.output.height;if(x>=zone.x&&x<=zone.x+zone.width&&y>=zone.y&&y<=zone.y+zone.height)throw new Error(`destination evidence collides with caption safe zone ${zone.id}`);}
+    if(point.label.left<0||point.label.top<0||point.label.right>spec.output.width||point.label.bottom>spec.output.height)throw new Error('destination label is outside the visible final composition');
+    for(const zone of spec.caption_safe_zones){const rect={left:zone.x*spec.output.width,right:(zone.x+zone.width)*spec.output.width,top:zone.y*spec.output.height,bottom:(zone.y+zone.height)*spec.output.height};const collision=point.label.left<rect.right&&point.label.right>rect.left&&point.label.top<rect.bottom&&point.label.bottom>rect.top;if(collision)throw new Error(`destination label collides with caption safe zone ${zone.id}`);}
     await page.evaluate(()=>window.geoScene.startRecord());
     await page.evaluate(()=>window.geoScene.animate());
     capture=await page.evaluate(()=>window.geoScene.stopRecord());
@@ -122,7 +125,7 @@ export async function render(specFile, outputDir, options = {}) {
   const preview=previews(mp4,outputDir,spec.output.duration_sec);
   const outputFiles=[mp4,...preview.files,preview.contact];
   const finished=performance.now(); const diskAfter=fs.statfsSync(outputDir).bavail*fs.statfsSync(outputDir).bsize;
-  const manifest={schema_version:1,tool:{id:TOOL_ID,version:TOOL_VERSION,commit:gitCommit(repoRoot)},upstream:{repository:'https://github.com/bilawalsidhu/gods-eye-view',commit:UPSTREAM_COMMIT,version:'0.2.1',usage:'Pinned CesiumJS dependency, keyless terrain/provider patterns, and camera semantics; full dashboard and bundled datasets excluded.'},input:{spec_path:path.relative(repoRoot,specPath),spec_sha256:sha256File(specPath),effective_spec:spec},source_integrity:{live_remote_tiles:!spec.testing,byte_identical_reproduction:spec.testing,imagery_date:spec.providers.imagery_date,modern_context_only:true,tile_cache:server.stats()},render:{started_at:new Date(Date.now()-(finished-started)).toISOString(),finished_at:new Date().toISOString(),elapsed_sec:Number(((finished-started)/1000).toFixed(2)),peak_orchestrator_rss_kib:peakRss,graphics:{browser:setup,headless:true},capture:{compressed_stream_bytes:capture.bytes,captured_frames:capture.captured_frames,max_frame_gap_ms:capture.max_frame_gap_ms,max_motion_gap_ms:capture.max_motion_gap_ms,method:'WebGL frames copied into a browser-owned 2D canvas and recorded as a continuous compressed MediaStream; no screenshot or uncompressed frame sequence',uncompressed_frame_sequence:false},quality:checks,console_messages:consoleMessages.filter((line)=>!/favicon/.test(line)).slice(-20),disk_free_before:diskBefore,disk_free_after:diskAfter},output:{...properties,previews:preview.files.map((f,i)=>({filename:path.basename(f),at_sec:preview.moments[i],sha256:sha256File(f)})),contact_sheet:{filename:path.basename(preview.contact),sha256:sha256File(preview.contact)},files:Object.fromEntries(outputFiles.map((f)=>[path.basename(f),sha256File(f)]))}};
+  const manifest={schema_version:2,tool:{id:TOOL_ID,version:TOOL_VERSION,commit:gitCommit(repoRoot)},upstream:{repository:'https://github.com/bilawalsidhu/gods-eye-view',commit:UPSTREAM_COMMIT,version:'0.2.1',usage:'Pinned CesiumJS dependency, keyless terrain/provider patterns, and camera semantics; full dashboard and bundled datasets excluded.'},input:{spec_path:path.relative(repoRoot,specPath),spec_sha256:sha256File(specPath),effective_spec:spec},narrative_placement:{mode:spec.mode,anchor:spec.editorial.anchor,destination_label:spec.destination_label.text,arrival_at_sec:spec.camera.keyframes.at(-1).at_sec,hold_sec:spec.output.duration_sec-spec.camera.keyframes.at(-1).at_sec},source_integrity:{live_remote_tiles:!spec.testing,byte_identical_reproduction:spec.testing,imagery_date:spec.providers.imagery_date,retrieved_on:spec.providers.retrieved_on,modern_context_only:true,provider:{id:spec.providers.imagery.id,kind:spec.providers.imagery.kind,coverage:spec.providers.imagery.coverage,cache_policy:spec.providers.imagery.cache_policy,rights_url:spec.providers.imagery.rights_url},proxy_cache:server.stats()},render:{started_at:new Date(Date.now()-(finished-started)).toISOString(),finished_at:new Date().toISOString(),elapsed_sec:Number(((finished-started)/1000).toFixed(2)),peak_orchestrator_rss_kib:peakRss,graphics:{browser:setup,headless:true},capture:{compressed_stream_bytes:capture.bytes,captured_frames:capture.captured_frames,max_frame_gap_ms:capture.max_frame_gap_ms,max_motion_gap_ms:capture.max_motion_gap_ms,method:'WebGL frames copied into a browser-owned 2D canvas and recorded as a continuous compressed MediaStream; no screenshot or uncompressed frame sequence',uncompressed_frame_sequence:false},quality:checks,console_messages:consoleMessages.filter((line)=>!/favicon/.test(line)).slice(-20),disk_free_before:diskBefore,disk_free_after:diskAfter},output:{...properties,previews:preview.files.map((f,i)=>({filename:path.basename(f),at_sec:preview.moments[i],sha256:sha256File(f)})),contact_sheet:{filename:path.basename(preview.contact),sha256:sha256File(preview.contact)},files:Object.fromEntries(outputFiles.map((f)=>[path.basename(f),sha256File(f)]))}};
   writeJson(path.join(outputDir,'manifest.json'),manifest); return manifest;
   } finally {
     fs.rmSync(activeMarker,{force:true});

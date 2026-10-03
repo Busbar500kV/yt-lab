@@ -1,0 +1,34 @@
+{
+  "schema_version": 2,
+  "tool_id": "geographic-scene-renderer",
+  "mode": "earth-to-location",
+  "editorial": {
+    "purpose": "Introduce Springfield, Illinois while demonstrating explicit disambiguation of a commonly duplicated place name.",
+    "narration": "Our first location is Springfield, the capital of Illinois.",
+    "context_note": "MODERN GEOGRAPHIC CONTEXT",
+    "anchor": {"text": "Springfield, the capital of Illinois", "intended_placement": "initial-location-introduction", "timeline_reference": "Align arrival with the spoken state disambiguation"}
+  },
+  "geography": {
+    "destination_id": "springfield-illinois-city",
+    "locations": [{
+      "id": "springfield-illinois-city", "display_label": "Springfield, Illinois", "place_name": "Springfield", "country": "United States", "administrative_region": "Illinois; Sangamon County", "feature_type": "state capital city",
+      "full_description": "Springfield, the capital city of the U.S. state of Illinois and county seat of Sangamon County, not another U.S. or international Springfield.", "lat": 39.7975, "lon": -89.645,
+      "extent": {"west": -89.78, "south": 39.70, "east": -89.54, "north": 39.90},
+      "sources": [
+        {"title": "City of Springfield, Illinois", "url": "https://www.springfield.il.us/", "role": "official municipality identity"},
+        {"title": "Wikidata Q28515: Springfield", "url": "https://www.wikidata.org/wiki/Q28515", "role": "coordinate, capital-city, state, and county cross-check"}
+      ],
+      "verification": {"status": "verified", "verified_on": "2026-10-03", "method": "Selected the Illinois capital entity and checked it against the official municipal identity before fixing the coordinate and extent.", "ambiguity_status": "resolved", "ambiguity_note": "The name Springfield is widely duplicated; the specification fixes Springfield, Illinois by state, county, feature type, and Wikidata entity."}
+    }]
+  },
+  "providers": {"imagery": "usgs-national-map-imagery", "terrain": "reearth-terrain", "permitted_layers": ["imagery", "terrain"], "imagery_date": "USGS service metadata: refreshed June 2024; component acquisition dates vary by scale and location", "retrieved_on": "2026-10-03"},
+  "camera": {"easing": "cubic-in-out", "keyframes": [
+    {"at_sec": 0, "view": {"lat": 37, "lon": -96, "range_m": 20500000, "heading_deg": 0, "pitch_deg": -90}},
+    {"at_sec": 2.2, "view": {"lat": 39, "lon": -91, "range_m": 2600000, "heading_deg": 5, "pitch_deg": -76}},
+    {"at_sec": 4.2, "view": {"lat": 39.7975, "lon": -89.645, "range_m": 70000, "heading_deg": 12, "pitch_deg": -57}}
+  ]},
+  "destination_label": {"text": "Springfield, Illinois", "reveal_at_sec": 4.2, "fade_in_sec": 0.25, "fade_out_sec": 0, "color": "#ffd65a"},
+  "caption_safe_zones": [{"id": "top-brand", "x": 0.06, "y": 0.03, "width": 0.88, "height": 0.12}, {"id": "bottom-captions", "x": 0.06, "y": 0.78, "width": 0.88, "height": 0.16}],
+  "overlays": [],
+  "output": {"format": "portrait", "width": 1080, "height": 1920, "fps": 30, "duration_sec": 6, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 4}
+}

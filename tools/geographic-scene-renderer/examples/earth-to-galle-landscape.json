@@ -1,0 +1,34 @@
+{
+  "schema_version": 2,
+  "tool_id": "geographic-scene-renderer",
+  "mode": "earth-to-location",
+  "editorial": {
+    "purpose": "Introduce the first story location by establishing Sri Lanka before identifying the coastal city of Galle.",
+    "narration": "The story begins in Galle, on Sri Lanka's southwest coast.",
+    "context_note": "GEOGRAPHIC CONTEXT · LANDSAT 2000 COMPOSITE",
+    "anchor": {"text": "begins in Galle", "intended_placement": "initial-location-introduction", "timeline_reference": "Begin the move as the narrator introduces the episode's first physical location"}
+  },
+  "geography": {
+    "destination_id": "galle-city-lk",
+    "locations": [{
+      "id": "galle-city-lk", "display_label": "Galle, Sri Lanka", "place_name": "Galle", "country": "Sri Lanka", "administrative_region": "Southern Province; Galle District", "feature_type": "city",
+      "full_description": "The city of Galle in Southern Province, Sri Lanka, not Galle District, Galle Face in Colombo, or a similarly named person or landmark.", "lat": 6.032778, "lon": 80.215556,
+      "extent": {"west": 80.16, "south": 5.98, "east": 80.28, "north": 6.10},
+      "sources": [
+        {"title": "UNGEGN World Geographical Names: Galle", "url": "https://ungegn.un.org/dashboard/cities/details?id=3161", "role": "official city identity and Survey Department of Sri Lanka coordinate source"},
+        {"title": "Wikidata Q319366: Galle", "url": "https://www.wikidata.org/wiki/Q319366", "role": "cross-check city type, country, province, coordinate, and GeoNames identity"}
+      ],
+      "verification": {"status": "verified", "verified_on": "2026-10-03", "method": "Matched the UNGEGN city record to the Wikidata city entity and reviewed the coastal city extent.", "ambiguity_status": "resolved", "ambiguity_note": "Selected Galle city, Sri Lanka; excluded the district, Galle Face in Colombo, and non-place namesakes."}
+    }]
+  },
+  "providers": {"imagery": "nasa-gibs-blue-marble", "terrain": "reearth-terrain", "permitted_layers": ["imagery", "terrain"], "imagery_date": "NASA Blue Marble Next Generation 2004 monthly composites; geographic context, not event footage", "retrieved_on": "2026-10-03"},
+  "camera": {"easing": "cubic-in-out", "keyframes": [
+    {"at_sec": 0, "view": {"lat": 18, "lon": 74, "range_m": 21000000, "heading_deg": 0, "pitch_deg": -90}},
+    {"at_sec": 2.2, "view": {"lat": 9, "lon": 78.5, "range_m": 3200000, "heading_deg": 4, "pitch_deg": -76}},
+      {"at_sec": 4.2, "view": {"lat": 6.032778, "lon": 80.215556, "range_m": 140000, "heading_deg": 8, "pitch_deg": -58}}
+  ]},
+  "destination_label": {"text": "Galle, Sri Lanka", "reveal_at_sec": 4.2, "fade_in_sec": 0.25, "fade_out_sec": 0, "color": "#ffd65a"},
+  "caption_safe_zones": [{"id": "lower-third", "x": 0.04, "y": 0.78, "width": 0.92, "height": 0.16}],
+  "overlays": [],
+  "output": {"format": "landscape", "width": 1920, "height": 1080, "fps": 30, "duration_sec": 6, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 4}
+}

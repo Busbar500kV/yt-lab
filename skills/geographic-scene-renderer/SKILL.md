@@ -1,74 +1,87 @@
 ---
 name: geographic-scene-renderer
-description: Render a short, sourced geographic establishing or terrain scene when a Hidden Order narration benefits from spatial context, using verified locations and an independently composed landscape or portrait camera move. Use for world-to-place views, terrain explanations, and sourced markers/routes; do not use as a mandatory globe intro or to simulate events.
+description: Render a verified Hidden Order geographic transition from Earth to the initial story location, or from one established location to a meaningful next location. Use when physical geography materially improves comprehension; do not use for passing place-name mentions, unsupported locations, invented travel, or mandatory map decoration.
 ---
 
 # Geographic scene renderer
 
-Use this skill only when geography materially helps the viewer understand the
-spoken point. A map move is editorial evidence, not a default transition. Prefer
-a still, archival source, or no geographic scene when place and scale are already
-clear.
+Use this skill when geography is part of the explanation. Do not add a globe or
+map merely for motion. Episode Codex resolves editorial meaning, place identity,
+extent, and timing; this renderer executes the fixed specification.
 
-## Prepare the scene
+## Choose the mode
 
-1. Copy the nearest specification from
-   `tools/geographic-scene-renderer/examples/`.
-2. Write the exact narration in `editorial.narration` and state what the camera
-   move proves or clarifies in `editorial.purpose`.
-3. Verify latitude, longitude, place name, and every route or boundary against an
-   authoritative or otherwise suitable source. Record each URL and verification
-   date. Coordinate objects use `lat` then `lon`; overlay point arrays use
-   `[lon, lat]`.
-4. Use only a provider admitted by the tool. Confirm current source rights before
-   production use; the upstream code licence does not license map imagery.
-5. Label present-day imagery as modern context. Never imply it depicts a
-   historical condition or event in progress.
-6. Author camera start and destination separately for the episode format:
-   1920×1080 for a landscape documentary or 1080×1920 for a short. Do not crop a
-   landscape move into portrait after rendering. Keep the relevant place,
-   attribution, and labels readable inside that format's safe areas.
-7. Add only restrained, verified markers, boundaries, or routes. Never connect
-   locations and call the line a road, river, pipeline, border, or journey unless
-   the recorded source supports that exact geometry.
+- Use `earth-to-location` once when the narrator first establishes the episode's
+  initial physical setting. Begin with recognizable Earth and finish with enough
+  surrounding geography to understand the feature.
+- Use `location-to-location` for a genuine change from the already established
+  story location. Pull back only as far as needed, transfer, and arrive. Use it
+  for a useful return to an earlier place, not every name mention.
+- If the path would feel frantic within six seconds, simplify its keyframes or
+  widen the destination framing. Never exceed six seconds or imply an actual
+  journey, historical route, or event movement without source support.
 
-## Invoke
+## Resolve before rendering
+
+1. Record the full place name, country, administrative region, feature type,
+   episode context, verified WGS84 coordinate, target extent, source URLs, method,
+   and verification date.
+2. Search for same-name cities, rivers, districts, landmarks, and countries.
+   Mark ambiguity `resolved` with a note, or stop. Never take the first geocoder
+   hit silently.
+3. Fix the verified coordinates in the JSON. Rendering must not geocode again.
+4. Use a short display label such as `Galle, Sri Lanka`. Keep the full identity
+   and verification only in provenance.
+5. Record the exact narration/dialogue anchor and intended placement. Treat
+   modern imagery as modern context, not historical evidence.
+
+Coordinate objects use `lat` then `lon`; overlay arrays use `[lon, lat]`.
+
+## Compose and invoke
+
+Copy the nearest schema-2 example under
+`tools/geographic-scene-renderer/examples/`. Author 1920×1080 documentary and
+1080×1920 short scenes independently. Keep the location, label, attribution,
+and caption/branding safe zones visible; never post-crop one format into another.
+Leave 1.5–2 seconds after arrival for recognition and label reading.
+
+Use only an admitted provider. NASA Blue Marble is worldwide regional context,
+not building detail; USGS is the closer-detail option only within configured
+contiguous-U.S. coverage. Unsupported coverage or closer-than-supported framing
+must fail. Never add a route or boundary unless its exact geometry is verified.
 
 ```bash
 tools/geographic-scene-renderer/scripts/install-upstream.sh
 node tools/geographic-scene-renderer/src/cli.mjs validate path/to/scene.json
-GEOGRAPHIC_RENDER_GPU_GROUP=render node \
-  tools/geographic-scene-renderer/src/cli.mjs render \
+node tools/geographic-scene-renderer/src/cli.mjs render \
   path/to/scene.json runtime/geographic-scene-renderer/runs/RUN_ID/output
 ```
 
-Run the repository cleanup command before and after the lab run. Keep runtime
-tiles, Chromium state, videos, and mail records out of Git.
+Run repository cleanup before and after lab work. Keep upstream dependencies,
+tiles, Chromium state, videos, and private mail state out of Git.
 
 ## Review
 
-Inspect the opening, early and late movement, first overlay frame, final hold, and
-closing frame. Also inspect a regular sample across the entire animation and a
-phone-sized frame. Check:
+Inspect the actual clip at normal speed on a display and inspect start, transfer,
+arrival, and hold frames plus a dense sequence and phone-size views. Confirm:
 
-- the place, terrain, and scale are correct for the narration;
-- motion is continuous, comfortable, and free of missing-tile flashes;
-- the final hold is long enough and does not isolate a misleading fragment;
-- labels do not collide with captions and stay readable in the native aspect;
-- imagery and terrain attribution remain visible;
-- the scene says modern geographic context when historical narration could be
-  misconstrued.
+- the verified location and extent match the spoken point;
+- Earth is recognizable in the initial mode, while subsequent moves do not
+  unnecessarily restart there;
+- movement is comfortable, continuous, and free of missing-tile flashes;
+- destination geography remains recognizable and the brief label is readable;
+- caption/branding zones stay clear and attribution remains legible;
+- current imagery is not presented as a historical condition;
+- the clip is at most six seconds and the destination hold is useful.
 
-An encoder success, tile-ready flag, or contact sheet alone is not visual review.
-On a headless machine, disclose if normal-speed playback could not be observed;
-use timing metrics and dense frame sampling without calling that playback.
+On a headless host, disclose that automated real-time decoding plus dense frame
+inspection is not human playback. Do not turn technical testing, visual review,
+email acceptance, owner acceptance, and production integration into one status.
 
 ## Limits
 
-Version 0.1.0 has no place search, automatic route creation, historical imagery,
-event reconstruction, live tracking, voice operation, or paid provider support.
-Live tiles can change and are not byte-identically reproducible. Complex line or
-polygon visibility needs human frame review even when validation passes. Treat
-the output as technically tested, visually inspected, owner accepted, or
-production integrated only when the corresponding gate actually occurred.
-
+Version 0.2.0 has no geocoder, automatic extent selection, route generation,
+historical imagery, event reconstruction, live tracking, voice control, or paid
+provider. Live dependencies may change and are not byte-identically reproducible.
+Human editorial review remains required for location meaning, framing, labels,
+motion, rights, and every route or boundary.

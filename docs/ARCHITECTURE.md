@@ -70,15 +70,18 @@ checkout, locked npm installation, Chromium runtime, tile cache, renders, and
 private review state live below `runtime/geographic-scene-renderer/` or the
 existing repository-wide runtime mail namespace.
 
-The input contract combines editorial intent, source-verified WGS84 locations,
-an allow-listed imagery/terrain pair, start and destination camera views, explicit
-timing/easing, verified overlays, safe zones, and native output geometry. Location
-objects are latitude/longitude; overlay coordinate arrays are longitude/latitude.
-One Cesium WGS84 transformation drives camera, terrain, and overlays. Landscape
-and portrait views are separately composed rather than stretched or post-cropped.
+The schema-2 contract separates verified location resolution from rendering. It
+combines one of two explicit narrative modes, an exact narration anchor,
+source-verified WGS84 identities/coordinates/extents, an allow-listed
+imagery/terrain pair, fixed time-based camera keyframes, a brief label, verified
+overlays, safe zones, and native output geometry. Location objects are
+latitude/longitude; overlay arrays are longitude/latitude. One Cesium WGS84
+transformation drives camera, terrain, and overlays. Landscape and portrait are
+separately composed rather than stretched or post-cropped.
 
-The adapter serves a minimal local Cesium page. Before recording it samples and
-warms the entire camera path, then captures the continuous WebGL animation through
+The adapter serves a minimal local Cesium page. Before recording it verifies
+authored keyframes and rehearses the deterministic path, then captures the
+continuous WebGL animation through
 a browser-owned compressed MediaStream and transcodes directly to final H.264.
 It does not retain an uncompressed frame sequence. Output validation checks
 dimensions, duration, frame count, pixel format, fast-start placement, blank
@@ -86,9 +89,10 @@ frames, tile readiness, and the destination projection. The compact manifest
 records effective input, tool/upstream revisions, providers and rights, changing
 data status, capture timing, renderer details, output properties, and hashes.
 
-Version 0.1.0 has a deliberately narrow provider catalogue: USGS National Map
-imagery and Re:Earth/Mapterhorn terrain. Provider rights and attribution are part
-of the contract, not dashboard defaults. Live source tiles may change, so the
-tool records hashes of outputs without claiming byte-identical live rerenders.
-The production boundary is a tool-scoped Bootstrap review; no lab email or handoff
-authorizes integration, episode approval, or publication.
+Version 0.2.0 adds NASA GIBS Blue Marble as fixed worldwide Earth/regional
+context and retains USGS National Map for closer contiguous-U.S. framing, with
+Re:Earth/Mapterhorn terrain. Provider-specific minimum framing and coverage are
+enforced. Rights and attribution are contract data, not dashboard defaults. Live
+dependencies may change, so output hashes do not imply byte-identical rerenders.
+The production boundary is a tool-scoped Bootstrap review; no lab email or
+handoff authorizes integration, episode approval, or publication.

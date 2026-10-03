@@ -1,7 +1,7 @@
 export function ease(kind, value) {
   const t = Math.max(0, Math.min(1, value));
   if (kind === 'linear') return t;
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
 
 export function shortestDegrees(from, to) {
@@ -22,14 +22,15 @@ export function sampleView(from, to, progress, easing = 'cubic-in-out') {
 }
 
 export function sampleTimeline(spec, seconds) {
-  const { start_hold_sec: a, move_sec: b, hold_sec: c, return_sec: d } = spec.camera.timing;
   const time = Math.max(0, Math.min(spec.output.duration_sec, seconds));
-  if (time < a) return { phase: 'opening', view: spec.camera.start, progress: 0 };
-  if (time < a + b) {
-    const p = (time - a) / b;
-    return { phase: 'move', view: sampleView(spec.camera.start, spec.camera.destination, p, spec.camera.easing), progress: p };
+  const frames = spec.camera.keyframes;
+  if (time >= frames.at(-1).at_sec) return { phase: 'destination-hold', segment: frames.length - 1, progress: 1, view: frames.at(-1).view };
+  for (let i = 0; i < frames.length - 1; i++) {
+    const from = frames[i]; const to = frames[i + 1];
+    if (time <= to.at_sec) {
+      const progress = (time - from.at_sec) / (to.at_sec - from.at_sec);
+      return { phase: i === 0 && progress === 0 ? 'opening' : 'move', segment: i, progress, view: sampleView(from.view, to.view, progress, spec.camera.easing) };
+    }
   }
-  if (time < a + b + c || d === 0) return { phase: 'hold', view: spec.camera.destination, progress: 1 };
-  const p = (time - a - b - c) / d;
-  return { phase: 'return', view: sampleView(spec.camera.destination, spec.camera.start, p, spec.camera.easing), progress: p };
+  return { phase: 'destination-hold', segment: frames.length - 1, progress: 1, view: frames.at(-1).view };
 }

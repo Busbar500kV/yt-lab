@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "tool_id": "geographic-scene-renderer",
+  "mode": "location-to-location",
+  "editorial": {
+    "purpose": "Demonstrate a substantial story-location change from Galle, Sri Lanka to Mount Fuji, Japan without implying a journey route.",
+    "narration": "The next part of the story moves to Mount Fuji in Japan.",
+    "context_note": "GEOGRAPHIC CONTEXT · LANDSAT 2000 · NOT A TRAVEL ROUTE",
+    "anchor": {"text": "moves to Mount Fuji in Japan", "intended_placement": "meaningful-location-change", "timeline_reference": "Begin at the established Galle context and arrive as Mount Fuji is named"}
+  },
+  "geography": {
+    "start_location_id": "galle-city-lk",
+    "destination_id": "mount-fuji-jp",
+    "locations": [
+      {
+        "id": "galle-city-lk", "display_label": "Galle, Sri Lanka", "place_name": "Galle", "country": "Sri Lanka", "administrative_region": "Southern Province; Galle District", "feature_type": "city",
+        "full_description": "The city of Galle in Southern Province, Sri Lanka.", "lat": 6.032778, "lon": 80.215556, "extent": {"west": 80.16, "south": 5.98, "east": 80.28, "north": 6.10},
+        "sources": [{"title": "UNGEGN World Geographical Names: Galle", "url": "https://ungegn.un.org/dashboard/cities/details?id=3161", "role": "official city identity and coordinate source"}, {"title": "Wikidata Q319366: Galle", "url": "https://www.wikidata.org/wiki/Q319366", "role": "city identity cross-check"}],
+        "verification": {"status": "verified", "verified_on": "2026-10-03", "method": "Matched UNGEGN and Wikidata city records.", "ambiguity_status": "resolved", "ambiguity_note": "Selected Galle city in Sri Lanka; excluded the district and other namesakes."}
+      },
+      {
+        "id": "mount-fuji-jp", "display_label": "Mount Fuji, Japan", "place_name": "Mount Fuji", "country": "Japan", "administrative_region": "Yamanashi and Shizuoka prefectures", "feature_type": "volcano and mountain",
+        "full_description": "Mount Fuji, the volcano spanning Yamanashi and Shizuoka prefectures in Japan, not another feature using the Fuji name.", "lat": 35.360556, "lon": 138.7275, "extent": {"west": 138.65, "south": 35.28, "east": 138.82, "north": 35.44},
+        "sources": [{"title": "Geospatial Information Authority of Japan Maps", "url": "https://maps.gsi.go.jp/#11/35.3606/138.7275/", "role": "national mapping reference and coordinate cross-check"}, {"title": "Wikidata Q39231: Mount Fuji", "url": "https://www.wikidata.org/wiki/Q39231", "role": "feature type, prefectures, and coordinate cross-check"}],
+        "verification": {"status": "verified", "verified_on": "2026-10-03", "method": "Cross-checked the fixed summit coordinate and feature identity against Japan's national map and Wikidata.", "ambiguity_status": "resolved", "ambiguity_note": "Selected the mountain/volcano in Japan; excluded other Fuji-named places and organizations."}
+      }
+    ]
+  },
+  "providers": {"imagery": "nasa-gibs-blue-marble", "terrain": "reearth-terrain", "permitted_layers": ["imagery", "terrain"], "imagery_date": "NASA Blue Marble Next Generation 2004 monthly composites; geographic context, not event footage", "retrieved_on": "2026-10-03"},
+  "camera": {"easing": "cubic-in-out", "keyframes": [
+      {"at_sec": 0, "view": {"lat": 6.032778, "lon": 80.215556, "range_m": 140000, "heading_deg": 8, "pitch_deg": -58}},
+    {"at_sec": 1.35, "view": {"lat": 12, "lon": 91, "range_m": 6500000, "heading_deg": 3, "pitch_deg": -83}},
+    {"at_sec": 2.85, "view": {"lat": 25, "lon": 116, "range_m": 9000000, "heading_deg": 0, "pitch_deg": -88}},
+      {"at_sec": 4.2, "view": {"lat": 35.360556, "lon": 138.7275, "range_m": 140000, "heading_deg": 18, "pitch_deg": -56}}
+  ]},
+  "destination_label": {"text": "Mount Fuji, Japan", "reveal_at_sec": 4.2, "fade_in_sec": 0.25, "fade_out_sec": 0, "color": "#ffd65a"},
+  "caption_safe_zones": [{"id": "top-brand", "x": 0.06, "y": 0.03, "width": 0.88, "height": 0.12}, {"id": "bottom-captions", "x": 0.06, "y": 0.78, "width": 0.88, "height": 0.16}],
+  "overlays": [],
+  "output": {"format": "portrait", "width": 1080, "height": 1920, "fps": 30, "duration_sec": 6, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 4}
+}

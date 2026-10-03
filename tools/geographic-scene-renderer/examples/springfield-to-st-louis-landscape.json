@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "tool_id": "geographic-scene-renderer",
+  "mode": "location-to-location",
+  "editorial": {
+    "purpose": "Show a nearby change of story location from Springfield, Illinois to St. Louis without restarting at Earth.",
+    "narration": "The story then shifts southwest to St. Louis, Missouri.",
+    "context_note": "MODERN GEOGRAPHIC CONTEXT · CAMERA MOVE IS NOT A TRAVEL ROUTE",
+    "anchor": {"text": "shifts southwest to St. Louis", "intended_placement": "meaningful-location-change", "timeline_reference": "Start from the previously established Springfield scene and arrive as St. Louis is named"}
+  },
+  "geography": {
+    "start_location_id": "springfield-illinois-city",
+    "destination_id": "st-louis-missouri-city",
+    "locations": [
+      {
+        "id": "springfield-illinois-city", "display_label": "Springfield, Illinois", "place_name": "Springfield", "country": "United States", "administrative_region": "Illinois; Sangamon County", "feature_type": "state capital city",
+        "full_description": "Springfield, the capital city of Illinois and county seat of Sangamon County.", "lat": 39.7975, "lon": -89.645, "extent": {"west": -89.78, "south": 39.70, "east": -89.54, "north": 39.90},
+        "sources": [{"title": "City of Springfield, Illinois", "url": "https://www.springfield.il.us/", "role": "official municipality identity"}, {"title": "Wikidata Q28515: Springfield", "url": "https://www.wikidata.org/wiki/Q28515", "role": "coordinate and administrative cross-check"}],
+        "verification": {"status": "verified", "verified_on": "2026-10-03", "method": "Matched official city identity to the Illinois capital entity.", "ambiguity_status": "resolved", "ambiguity_note": "Selected Springfield, Illinois; excluded other Springfields."}
+      },
+      {
+        "id": "st-louis-missouri-city", "display_label": "St. Louis, Missouri", "place_name": "St. Louis", "country": "United States", "administrative_region": "Missouri; independent city", "feature_type": "independent city",
+        "full_description": "The independent city of St. Louis, Missouri, on the Mississippi River, not St. Louis County or another namesake.", "lat": 38.626389, "lon": -90.199444, "extent": {"west": -90.33, "south": 38.53, "east": -90.16, "north": 38.78},
+        "sources": [{"title": "City of St. Louis", "url": "https://www.stlouis-mo.gov/", "role": "official municipal identity"}, {"title": "Wikidata Q38022: St. Louis", "url": "https://www.wikidata.org/wiki/Q38022", "role": "coordinate and independent-city cross-check"}],
+        "verification": {"status": "verified", "verified_on": "2026-10-03", "method": "Matched official city identity to the independent-city entity and reviewed the city extent.", "ambiguity_status": "resolved", "ambiguity_note": "Selected the independent city in Missouri; excluded St. Louis County and other namesakes."}
+      }
+    ]
+  },
+  "providers": {"imagery": "usgs-national-map-imagery", "terrain": "reearth-terrain", "permitted_layers": ["imagery", "terrain"], "imagery_date": "USGS service metadata: refreshed June 2024; component acquisition dates vary by scale and location", "retrieved_on": "2026-10-03"},
+  "camera": {"easing": "cubic-in-out", "keyframes": [
+    {"at_sec": 0, "view": {"lat": 39.7975, "lon": -89.645, "range_m": 70000, "heading_deg": 12, "pitch_deg": -57}},
+    {"at_sec": 1.35, "view": {"lat": 39.25, "lon": -89.92, "range_m": 420000, "heading_deg": 8, "pitch_deg": -70}},
+    {"at_sec": 2.8, "view": {"lat": 38.85, "lon": -90.08, "range_m": 260000, "heading_deg": 5, "pitch_deg": -66}},
+    {"at_sec": 4.2, "view": {"lat": 38.626389, "lon": -90.199444, "range_m": 70000, "heading_deg": 18, "pitch_deg": -57}}
+  ]},
+  "destination_label": {"text": "St. Louis, Missouri", "reveal_at_sec": 4.2, "fade_in_sec": 0.25, "fade_out_sec": 0, "color": "#72d6ff"},
+  "caption_safe_zones": [{"id": "lower-third", "x": 0.04, "y": 0.78, "width": 0.92, "height": 0.16}],
+  "overlays": [],
+  "output": {"format": "landscape", "width": 1920, "height": 1080, "fps": 30, "duration_sec": 6, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 4}
+}

@@ -1,90 +1,109 @@
 # Geographic scene renderer
 
-`geographic-scene-renderer` 0.1.0 is a terminal adapter for short, sourced
-geographic establishing scenes. It renders an independently composed landscape
-or portrait camera move, optional verified overlays, attribution, preview frames,
-a contact sheet, and an H.264/yuv420p fast-start MP4. It does not use voice AI,
-tracking feeds, event simulation, or paid APIs.
+`geographic-scene-renderer` 0.2.0 turns a verified, fixed scene specification
+into one of two deterministic clips, each no longer than six seconds:
 
-The adapter reuses the pinned God's Eye View CesiumJS dependency and camera
-semantics but not its dashboard or bundled data. Read `UPSTREAM_AUDIT.md` before
-changing providers.
+- `earth-to-location` introduces the episode's initial physical setting from a
+  recognizable Earth view.
+- `location-to-location` pulls back from an established place and moves to a
+  meaningful next setting without implying a journey or historical route.
+
+The terminal adapter produces a native landscape or portrait H.264/yuv420p
+fast-start MP4, preview frames, a contact sheet, and a hashed manifest. It adds
+only a brief destination label, modern-context note, required attribution, and
+optional source-verified geographic overlays. It does not geocode, invent
+routes, reconstruct events, use voice AI, or call paid services.
 
 ## Install
 
-Requirements: Node.js 24, npm, FFmpeg/ffprobe, Git, and enough graphics access for
-headless Chromium. The reproducible installer clones the exact audited upstream
-revision and installs its locked dependencies and Chromium below ignored runtime
-storage:
+Requirements are Node.js 24, npm, FFmpeg/ffprobe, Git, Chromium graphics access,
+and 2 GiB free disk. The installer checks out the exact audited God's Eye View
+revision below ignored runtime storage and installs its locked dependencies:
 
 ```bash
 tools/geographic-scene-renderer/scripts/install-upstream.sh
 ```
 
-On busbar, Chromium needs the existing `render` supplementary group:
+On busbar the renderer automatically uses the already-authorized `render` GPU
+group when available; `GEOGRAPHIC_RENDER_GPU_GROUP=render` can select it
+explicitly. Software WebGL remains a slower fallback. No key or billing account
+is used.
 
-```bash
-export GEOGRAPHIC_RENDER_GPU_GROUP=render
-```
-
-No API key or billing account is used. The installer does not alter the system or
-production repositories.
-
-## Validate and render
-
-Run cleanup before and after a lab session using the existing lab facility:
+## Render
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m feature_highlighter cleanup
 node tools/geographic-scene-renderer/src/cli.mjs validate \
-  tools/geographic-scene-renderer/examples/mount-st-helens-landscape.json
-GEOGRAPHIC_RENDER_GPU_GROUP=render node \
-  tools/geographic-scene-renderer/src/cli.mjs render \
-  tools/geographic-scene-renderer/examples/mount-st-helens-landscape.json \
-  runtime/geographic-scene-renderer/runs/my-mount-st-helens/output
+  tools/geographic-scene-renderer/examples/earth-to-galle-landscape.json
+node tools/geographic-scene-renderer/src/cli.mjs render \
+  tools/geographic-scene-renderer/examples/earth-to-galle-landscape.json \
+  runtime/geographic-scene-renderer/runs/my-galle/output
 PYTHONPATH=src .venv/bin/python -m feature_highlighter cleanup
 ```
 
-Output is `scene.mp4`, three JPEG previews, `contact-sheet.jpg`, and
+Output is `scene.mp4`, three preview JPEGs, `contact-sheet.jpg`, and
 `manifest.json`. The renderer refuses a non-empty output directory, less than 2
-GiB free space, an unapproved provider ID, a destination outside the final view,
-a centre collision with a caption exclusion zone, inconsistent timing, a failed
-tile-readiness gate, black frames, or wrong encoded properties. The source tile
-cache is bounded to 100 MiB.
+GiB free, an unsupported provider or location, ambiguous/unverified identity,
+inconsistent mode/timing, a destination outside its verified extent, a label or
+caption-safe collision, failed keyframe readiness, deficient capture cadence,
+black frames, or wrong encoded properties.
 
 ## JSON contract
 
-Coordinates are decimal WGS84 latitude and longitude. Arrays used by route or
-boundary overlays are explicit `[longitude, latitude]` pairs. The contract has:
+Schema 2 separates location resolution from rendering. Resolve and verify every
+place before authoring the scene; the renderer never chooses a geocoder result.
+Coordinates are decimal WGS84 `lat`/`lon`; overlay point arrays are explicit
+`[longitude, latitude]` pairs.
 
-- `editorial`: scene purpose, exact narration, and an on-screen modern-context
-  note;
-- `geography`: source-verified locations and one destination ID;
-- `providers`: allow-listed imagery and terrain plus permitted layers and data
-  date disclosure;
-- `camera`: start/destination views, cubic or linear easing, and opening, move,
-  hold, and optional return timings;
-- `overlays`: verified marker, route, or boundary with a source reference;
-- `caption_safe_zones`: normalized output rectangles that the destination must
-  not occupy;
-- `output`: even dimensions, frame rate, total duration, H.264/yuv420p/fast-start
-  requirements, CRF, and optional capture slowdown.
+- `mode`: `earth-to-location` or `location-to-location`.
+- `editorial`: purpose, narration, modern-context note, and a narration anchor
+  with intended placement and timeline reference.
+- `geography.locations`: stable IDs, brief labels, complete descriptions,
+  feature types, coordinates, extents, references, verification method/date,
+  and explicit ambiguity resolution.
+- `providers`: allow-listed imagery/terrain, permitted layers, retrieval date,
+  and imagery-date disclosure.
+- `camera`: fixed, increasing keyframes and `linear` or `cubic-in-out` easing.
+  Arrival must leave 1.5–2.25 seconds of destination hold.
+- `destination_label`: exact verified brief label and arrival-bound fade.
+- `overlays`: optional verified route or boundary only; no inferred connections.
+- `caption_safe_zones`: normalized rectangles kept clear of the destination
+  label and centered subject.
+- `output`: native 16:9 or 9:16 geometry, 3–6 seconds, frame rate, H.264,
+  yuv420p, fast-start, CRF, and optional capture slowdown.
 
-The start and destination are separately authored for each aspect ratio. The
-tool does not stretch or crop an existing map image. Camera position and overlay
-geometry share one WGS84-to-Cesium transformation in every frame.
+Landscape and portrait are separately composed; neither is a crop of the other.
+The manifest records the effective specification, narrative anchor, tool and
+upstream revisions, providers/rights/dates, graphics and capture statistics,
+output properties, and hashes.
 
-## Tests and limitations
+## Providers and limits
+
+`usgs-national-map-imagery` supports closer framing only inside the configured
+contiguous-U.S. bounds. `nasa-gibs-blue-marble` is a fixed 2004 global composite
+for Earth and regional context; its 120 km minimum destination range is enforced
+because it is not city/building-detail imagery. Re:Earth/Mapterhorn provides
+terrain. All are keyless and cost $0 for these tests, subject to availability and
+reasonable-use limits. See `UPSTREAM_AUDIT.md` for rights and attribution.
+
+Live remote dependencies mean byte-identical output is not promised. A scene
+needing unsupported close detail must fail or use a newly reviewed provider; it
+must not silently substitute imagery. Modern geographic context is not evidence
+of historical conditions.
+
+## Tests and review
 
 ```bash
 cd tools/geographic-scene-renderer
-GEOGRAPHIC_RENDER_GPU_GROUP=render npm test
+npm test
 ```
 
-The deterministic fixture uses a generated grid and ellipsoid terrain. Live
-demonstrations depend on changing remote tiles, so their effective specifications,
-provider dates, tile-request statistics, and hashes are recorded, but byte-for-byte
-reproduction is not claimed. The destination visibility check covers the evidence
-point; complex overlays still require frame review. Headless rendering needs a
-working WebGL implementation and is much slower under SwiftShader.
+The deterministic end-to-end fixture uses a generated grid and ellipsoid. Tests
+cover both modes, six-second/hold timing, location ambiguity and extents, camera
+endpoints, provider coverage and minimum range, labels, native formats, safe
+zones, failure paths, deterministic interpolation, H.264/yuv420p/fast-start,
+frame count, cleanup-safe active markers, and mail duplicate prevention.
 
+For a live render inspect start, movement, arrival, and hold frames; a dense
+sequence; phone-size views; and normal-speed playback on a display. Encoder
+success and a contact sheet alone do not establish visual quality.
