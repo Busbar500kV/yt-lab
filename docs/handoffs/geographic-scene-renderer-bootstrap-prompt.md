@@ -15,7 +15,7 @@ Tested lab version: `0.2.0`
 
 Immutable tag: `tool/geographic-scene-renderer/v0.2.0`
 
-Exact tested commit: `TESTED_COMMIT_TO_BE_SET_AFTER_COMMIT`
+Exact tested commit: `405dcb799b5ff1e42906c80ed2f3d6897b787b8f`
 
 Pinned God's Eye View commit: `aa16b7c3b0166a89d8c7a6089e0aff53a22faaee`
 (upstream package 0.2.1)
