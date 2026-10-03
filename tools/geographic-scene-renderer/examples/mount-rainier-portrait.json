@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "tool_id": "geographic-scene-renderer",
+  "editorial": {"purpose": "Identify Mount Rainier and its wider position in Washington in a vertical documentary scene.", "narration": "Southeast of the Seattle–Tacoma region, Mount Rainier is the highest peak in the Cascade Range.", "context_note": "MODERN GEOGRAPHIC CONTEXT"},
+  "geography": {"destination_id": "mount-rainier", "locations": [{"id": "mount-rainier", "label": "Mount Rainier", "lat": 46.853, "lon": -121.76, "source_url": "https://www.usgs.gov/volcanoes/mount-rainier", "verified_on": "2026-10-03"}]},
+  "providers": {"imagery": "usgs-national-map-imagery", "terrain": "reearth-terrain", "permitted_layers": ["imagery", "terrain"], "imagery_date": "USGS service metadata: refreshed June 2024; component acquisition dates vary by scale and location"},
+  "camera": {"start": {"lat": 46.6, "lon": -121.9, "range_m": 950000, "heading_deg": 5, "pitch_deg": -75}, "destination": {"lat": 46.853, "lon": -121.76, "range_m": 70000, "heading_deg": 22, "pitch_deg": -50}, "easing": "cubic-in-out", "timing": {"start_hold_sec": 1, "move_sec": 4, "hold_sec": 3, "return_sec": 2}},
+  "overlays": [{"type": "marker", "location_id": "mount-rainier", "label": "MOUNT RAINIER", "source_url": "https://www.usgs.gov/volcanoes/mount-rainier", "verified": true, "reveal_at_sec": 4.5, "color": "#ffd65a"}],
+  "caption_safe_zones": [{"id": "top-title", "x": 0.06, "y": 0.03, "width": 0.88, "height": 0.12}, {"id": "bottom-caption", "x": 0.06, "y": 0.76, "width": 0.88, "height": 0.2}],
+  "output": {"width": 1080, "height": 1920, "fps": 30, "duration_sec": 10, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 4}
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "tool_id": "geographic-scene-renderer",
+  "editorial": {"purpose": "Show the Grand Canyon as terrain shaped around the Colorado River corridor.", "narration": "The Colorado River runs through a canyon system stretching across northern Arizona.", "context_note": "MODERN TERRAIN CONTEXT"},
+  "geography": {"destination_id": "grand-canyon", "locations": [{"id": "grand-canyon", "label": "Grand Canyon", "lat": 36.059, "lon": -112.1092, "source_url": "https://www.nps.gov/grca/learn/news/upload/trip-planner-grca.pdf", "verified_on": "2026-10-03"}]},
+  "providers": {"imagery": "usgs-national-map-imagery", "terrain": "reearth-terrain", "permitted_layers": ["imagery", "terrain"], "imagery_date": "USGS service metadata: refreshed June 2024; component acquisition dates vary by scale and location"},
+  "camera": {"start": {"lat": 36.1, "lon": -112.1, "range_m": 950000, "heading_deg": 20, "pitch_deg": -70}, "destination": {"lat": 36.059, "lon": -112.1092, "range_m": 52000, "heading_deg": 62, "pitch_deg": -42}, "easing": "cubic-in-out", "timing": {"start_hold_sec": 1, "move_sec": 4.5, "hold_sec": 4.5, "return_sec": 0}},
+  "overlays": [{"type": "marker", "location_id": "grand-canyon", "label": "GRAND CANYON · COLORADO RIVER", "source_url": "https://www.nps.gov/grca/learn/news/upload/trip-planner-grca.pdf", "verified": true, "reveal_at_sec": 5, "color": "#72d6ff"}],
+  "caption_safe_zones": [{"id": "lower-third", "x": 0.04, "y": 0.8, "width": 0.92, "height": 0.16}],
+  "output": {"width": 1920, "height": 1080, "fps": 30, "duration_sec": 10, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 4}
+}

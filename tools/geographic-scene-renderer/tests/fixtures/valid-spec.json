@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "tool_id": "geographic-scene-renderer",
+  "testing": true,
+  "editorial": {
+    "purpose": "Deterministic renderer smoke test.",
+    "narration": "A synthetic grid verifies camera timing without a provider request.",
+    "context_note": "TEST FIXTURE — NOT SOURCE EVIDENCE"
+  },
+  "geography": {
+    "destination_id": "fixture",
+    "locations": [
+      {
+        "id": "fixture",
+        "label": "Fixture point",
+        "lat": 46.2,
+        "lon": -122.18,
+        "source_url": "https://example.invalid/fixture",
+        "verified_on": "2026-10-03"
+      }
+    ]
+  },
+  "providers": {
+    "imagery": "test-grid",
+    "terrain": "ellipsoid",
+    "permitted_layers": ["imagery", "terrain"],
+    "imagery_date": "synthetic fixed fixture"
+  },
+  "camera": {
+    "start": {"lat": 39, "lon": -105, "range_m": 12000000, "heading_deg": 0, "pitch_deg": -90},
+    "destination": {"lat": 46.2, "lon": -122.18, "range_m": 500000, "heading_deg": 5, "pitch_deg": -65},
+    "easing": "cubic-in-out",
+    "timing": {"start_hold_sec": 0.5, "move_sec": 1.5, "hold_sec": 1, "return_sec": 0}
+  },
+  "overlays": [
+    {"type": "marker", "location_id": "fixture", "label": "FIXTURE", "source_url": "https://example.invalid/fixture", "verified": true, "reveal_at_sec": 1.5, "color": "#ffd65a"}
+  ],
+  "caption_safe_zones": [
+    {"id": "lower-third", "x": 0.05, "y": 0.78, "width": 0.9, "height": 0.18}
+  ],
+  "output": {"width": 640, "height": 360, "fps": 15, "duration_sec": 3, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 24}
+}

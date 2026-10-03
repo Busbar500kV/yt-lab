@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "tool_id": "geographic-scene-renderer",
+  "editorial": {
+    "purpose": "Establish the Pacific Northwest before identifying Mount St. Helens.",
+    "narration": "In southwest Washington, Mount St. Helens rises within the Cascade Range.",
+    "context_note": "MODERN GEOGRAPHIC CONTEXT"
+  },
+  "geography": {"destination_id": "mount-st-helens", "locations": [{"id": "mount-st-helens", "label": "Mount St. Helens", "lat": 46.2, "lon": -122.18, "source_url": "https://www.usgs.gov/volcanoes/mount-st.-helens", "verified_on": "2026-10-03"}]},
+  "providers": {"imagery": "usgs-national-map-imagery", "terrain": "reearth-terrain", "permitted_layers": ["imagery", "terrain"], "imagery_date": "USGS service metadata: refreshed June 2024; component acquisition dates vary by scale and location"},
+  "camera": {"start": {"lat": 38, "lon": -105, "range_m": 18500000, "heading_deg": 0, "pitch_deg": -90}, "destination": {"lat": 46.2, "lon": -122.18, "range_m": 95000, "heading_deg": 12, "pitch_deg": -58}, "easing": "cubic-in-out", "timing": {"start_hold_sec": 1, "move_sec": 5, "hold_sec": 4, "return_sec": 0}},
+  "overlays": [{"type": "marker", "location_id": "mount-st-helens", "label": "MOUNT ST. HELENS", "source_url": "https://www.usgs.gov/volcanoes/mount-st.-helens", "verified": true, "reveal_at_sec": 5.5, "color": "#ffd65a"}],
+  "caption_safe_zones": [{"id": "lower-third", "x": 0.04, "y": 0.78, "width": 0.92, "height": 0.18}],
+  "output": {"width": 1920, "height": 1080, "fps": 30, "duration_sec": 10, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 4}
+}

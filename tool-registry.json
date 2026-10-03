@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-09-14",
+  "updated_at": "2026-10-03",
   "tools": [
     {
       "tool_id": "animated-feature-highlighter",
@@ -16,6 +16,33 @@
       "bootstrap_handoff_path": "docs/BOOTSTRAP_HANDOFF.md",
       "layout_note": "Released before the per-tool tools/<tool-id>/ layout was established; preserve its existing paths.",
       "future_handoff_policy": "Exclude this capability from later tool handoffs and never request reintegration."
+    },
+    {
+      "tool_id": "geographic-scene-renderer",
+      "tool_directory": "tools/geographic-scene-renderer",
+      "skill_directory": "skills/geographic-scene-renderer",
+      "lab_version": "0.1.0",
+      "tested_commit": null,
+      "selected_lab_commit": null,
+      "upstream_repository": "https://github.com/bilawalsidhu/gods-eye-view",
+      "upstream_commit": "aa16b7c3b0166a89d8c7a6089e0aff53a22faaee",
+      "release_tag": "tool/geographic-scene-renderer/v0.1.0",
+      "status": "visually_inspected",
+      "lifecycle": {
+        "experimental": "2026-10-03",
+        "technically_tested": "2026-10-03",
+        "visually_inspected": "2026-10-03",
+        "emailed_for_owner_review": null,
+        "owner_accepted": null,
+        "integrated_into_production": null
+      },
+      "bootstrap_handoff_path": "docs/handoffs/geographic-scene-renderer-bootstrap-prompt.md",
+      "dependencies": [
+        "Node.js 24",
+        "FFmpeg 6+",
+        "pinned God's Eye View npm lockfile runtime"
+      ],
+      "integration_scope": "This capability only; animated-feature-highlighter and all previously integrated tools are excluded."
     }
   ]
 }

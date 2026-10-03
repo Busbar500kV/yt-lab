@@ -51,3 +51,17 @@ animation samples can be visually inspected; SMTP can accept a lab review packag
 the owner can review it; and Production Bootstrap can integrate a tested version.
 The registry records the highlighter's completed integration; none of these states
 is inferred for a future tool.
+
+## Candidate capability: geographic scene renderer
+
+`geographic-scene-renderer` 0.1.0 is an independent candidate that creates
+sourced world-to-place, terrain, and place-identification scenes in native
+landscape or portrait geometry. It is not a mandatory intro and is not integrated
+into production. Installation, input contract, provider restrictions, and the
+single-scene command are in
+[`tools/geographic-scene-renderer/README.md`](tools/geographic-scene-renderer/README.md).
+
+Its adapter has no package dependencies of its own. A reproducible installer
+checks out the exact audited God's Eye View revision and installs its locked
+Cesium/Puppeteer runtime below ignored storage. No voice AI, API keys, paid
+services, live tracking, or bundled non-commercial datasets are enabled.

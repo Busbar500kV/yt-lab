@@ -26,3 +26,8 @@
   and examining ignored `runtime/reports/` and `runtime/mail/records/`.
 - Commit code and compact non-private reports only. Do not commit rendered media,
   downloaded sources, credentials, caches, or private mail state.
+- For `geographic-scene-renderer`, keep the pinned upstream checkout, Chromium,
+  tile cache, and renders below `runtime/geographic-scene-renderer/`. Provider
+  access is not reuse permission: follow its upstream audit and admit no new map
+  source without a rights review. Maps are scene-specific, never mandatory, and
+  landscape documentary and portrait short compositions are authored separately.

@@ -1,0 +1,4 @@
+html,body,#cesium{width:100%;height:100%;margin:0;overflow:hidden;background:#03070d}.cesium-viewer-bottom{display:none!important}
+#attribution{position:fixed;right:12px;bottom:9px;max-width:78%;padding:4px 7px;color:#f5f7fa;background:rgba(0,0,0,.72);font:500 11px/1.2 system-ui,sans-serif;text-align:right;border-radius:3px;z-index:4;text-shadow:0 1px 2px #000}
+#context-note{position:fixed;left:12px;bottom:9px;padding:4px 7px;color:#d6dce4;background:rgba(0,0,0,.62);font:500 10px/1.2 system-ui,sans-serif;border-radius:3px;z-index:4}
+.cesium-widget-credits{display:none!important}

@@ -61,3 +61,34 @@ full-resolution run directories become cleanup candidates.
 The highlighter was integrated by production commit `74383dbb474581052868e9767b889e32cffd980d`.
 Its historical handoff is closed and must not be reused by a later tool. Lab work
 does not mutate production repositories or running services.
+
+## Geographic scene renderer candidate
+
+`geographic-scene-renderer` is independent of the released highlighter. Its Node
+adapter lives under `tools/geographic-scene-renderer/`; the ignored upstream
+checkout, locked npm installation, Chromium runtime, tile cache, renders, and
+private review state live below `runtime/geographic-scene-renderer/` or the
+existing repository-wide runtime mail namespace.
+
+The input contract combines editorial intent, source-verified WGS84 locations,
+an allow-listed imagery/terrain pair, start and destination camera views, explicit
+timing/easing, verified overlays, safe zones, and native output geometry. Location
+objects are latitude/longitude; overlay coordinate arrays are longitude/latitude.
+One Cesium WGS84 transformation drives camera, terrain, and overlays. Landscape
+and portrait views are separately composed rather than stretched or post-cropped.
+
+The adapter serves a minimal local Cesium page. Before recording it samples and
+warms the entire camera path, then captures the continuous WebGL animation through
+a browser-owned compressed MediaStream and transcodes directly to final H.264.
+It does not retain an uncompressed frame sequence. Output validation checks
+dimensions, duration, frame count, pixel format, fast-start placement, blank
+frames, tile readiness, and the destination projection. The compact manifest
+records effective input, tool/upstream revisions, providers and rights, changing
+data status, capture timing, renderer details, output properties, and hashes.
+
+Version 0.1.0 has a deliberately narrow provider catalogue: USGS National Map
+imagery and Re:Earth/Mapterhorn terrain. Provider rights and attribution are part
+of the contract, not dashboard defaults. Live source tiles may change, so the
+tool records hashes of outputs without claiming byte-identical live rerenders.
+The production boundary is a tool-scoped Bootstrap review; no lab email or handoff
+authorizes integration, episode approval, or publication.
