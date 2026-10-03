@@ -36,5 +36,5 @@
   "destination_label": {"text": "Mount Fuji, Japan", "reveal_at_sec": 4.2, "fade_in_sec": 0.25, "fade_out_sec": 0, "color": "#ffd65a"},
   "caption_safe_zones": [{"id": "top-brand", "x": 0.06, "y": 0.03, "width": 0.88, "height": 0.12}, {"id": "bottom-captions", "x": 0.06, "y": 0.78, "width": 0.88, "height": 0.16}],
   "overlays": [],
-  "output": {"format": "portrait", "width": 1080, "height": 1920, "fps": 30, "duration_sec": 6, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 4}
+  "output": {"format": "portrait", "width": 1080, "height": 1920, "fps": 30, "duration_sec": 6, "codec": "h264", "pixel_format": "yuv420p", "fast_start": true, "crf": 20, "capture_slowdown": 6}
 }

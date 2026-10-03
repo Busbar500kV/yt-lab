@@ -1,6 +1,6 @@
 # Geographic scene renderer
 
-`geographic-scene-renderer` 0.2.0 turns a verified, fixed scene specification
+`geographic-scene-renderer` 0.2.1 turns a verified, fixed scene specification
 into one of two deterministic clips, each no longer than six seconds:
 
 - `earth-to-location` introduces the episode's initial physical setting from a

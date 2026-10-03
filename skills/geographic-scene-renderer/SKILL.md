@@ -80,7 +80,7 @@ email acceptance, owner acceptance, and production integration into one status.
 
 ## Limits
 
-Version 0.2.0 has no geocoder, automatic extent selection, route generation,
+Version 0.2.1 has no geocoder, automatic extent selection, route generation,
 historical imagery, event reconstruction, live tracking, voice control, or paid
 provider. Live dependencies may change and are not byte-identically reproducible.
 Human editorial review remains required for location meaning, framing, labels,
