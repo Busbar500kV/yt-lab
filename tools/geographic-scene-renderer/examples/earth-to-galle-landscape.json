@@ -5,7 +5,7 @@
   "editorial": {
     "purpose": "Introduce the first story location by establishing Sri Lanka before identifying the coastal city of Galle.",
     "narration": "The story begins in Galle, on Sri Lanka's southwest coast.",
-    "context_note": "GEOGRAPHIC CONTEXT · LANDSAT 2000 COMPOSITE",
+    "context_note": "GEOGRAPHIC CONTEXT · BLUE MARBLE 2004 COMPOSITE",
     "anchor": {"text": "begins in Galle", "intended_placement": "initial-location-introduction", "timeline_reference": "Begin the move as the narrator introduces the episode's first physical location"}
   },
   "geography": {

@@ -5,7 +5,7 @@
   "editorial": {
     "purpose": "Demonstrate a substantial story-location change from Galle, Sri Lanka to Mount Fuji, Japan without implying a journey route.",
     "narration": "The next part of the story moves to Mount Fuji in Japan.",
-    "context_note": "GEOGRAPHIC CONTEXT · LANDSAT 2000 · NOT A TRAVEL ROUTE",
+    "context_note": "GEOGRAPHIC CONTEXT · BLUE MARBLE 2004 · NOT A TRAVEL ROUTE",
     "anchor": {"text": "moves to Mount Fuji in Japan", "intended_placement": "meaningful-location-change", "timeline_reference": "Begin at the established Galle context and arrive as Mount Fuji is named"}
   },
   "geography": {
@@ -29,8 +29,8 @@
   "providers": {"imagery": "nasa-gibs-blue-marble", "terrain": "reearth-terrain", "permitted_layers": ["imagery", "terrain"], "imagery_date": "NASA Blue Marble Next Generation 2004 monthly composites; geographic context, not event footage", "retrieved_on": "2026-10-03"},
   "camera": {"easing": "cubic-in-out", "keyframes": [
       {"at_sec": 0, "view": {"lat": 6.032778, "lon": 80.215556, "range_m": 140000, "heading_deg": 8, "pitch_deg": -58}},
-    {"at_sec": 1.35, "view": {"lat": 12, "lon": 91, "range_m": 6500000, "heading_deg": 3, "pitch_deg": -83}},
-    {"at_sec": 2.85, "view": {"lat": 25, "lon": 116, "range_m": 9000000, "heading_deg": 0, "pitch_deg": -88}},
+      {"at_sec": 1.15, "view": {"lat": 6.032778, "lon": 80.215556, "range_m": 4200000, "heading_deg": 3, "pitch_deg": -84}},
+      {"at_sec": 2.85, "view": {"lat": 24, "lon": 113, "range_m": 9500000, "heading_deg": 0, "pitch_deg": -88}},
       {"at_sec": 4.2, "view": {"lat": 35.360556, "lon": 138.7275, "range_m": 140000, "heading_deg": 18, "pitch_deg": -56}}
   ]},
   "destination_label": {"text": "Mount Fuji, Japan", "reveal_at_sec": 4.2, "fade_in_sec": 0.25, "fade_out_sec": 0, "color": "#ffd65a"},

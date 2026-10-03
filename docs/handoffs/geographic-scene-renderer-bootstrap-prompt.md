@@ -11,11 +11,11 @@ already present, report it and skip duplicate files or behavior. Integrate only
 the candidate capability with stable ID `geographic-scene-renderer`; never copy
 or synchronize the full `yt-lab` repository.
 
-Tested lab version: `0.2.1`
+Tested lab version: `0.2.2`
 
-Immutable tag: `tool/geographic-scene-renderer/v0.2.1`
+Immutable tag: `tool/geographic-scene-renderer/v0.2.2`
 
-Exact tested commit: `bd62019f9d693ed1e6b8e5a94af9cbf52bba1018`
+Exact tested commit: `TESTED_COMMIT_TO_BE_SET_AFTER_COMMIT`
 
 Pinned God's Eye View commit: `aa16b7c3b0166a89d8c7a6089e0aff53a22faaee`
 (upstream package 0.2.1)

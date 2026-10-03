@@ -89,7 +89,7 @@ frames, tile readiness, and the destination projection. The compact manifest
 records effective input, tool/upstream revisions, providers and rights, changing
 data status, capture timing, renderer details, output properties, and hashes.
 
-Version 0.2.1 adds NASA GIBS Blue Marble as fixed worldwide Earth/regional
+Version 0.2.2 adds NASA GIBS Blue Marble as fixed worldwide Earth/regional
 context and retains USGS National Map for closer contiguous-U.S. framing, with
 Re:Earth/Mapterhorn terrain. Provider-specific minimum framing and coverage are
 enforced. Rights and attribution are contract data, not dashboard defaults. Live
