@@ -1,6 +1,6 @@
 # Geographic scene renderer
 
-`geographic-scene-renderer` 0.2.2 turns a verified, fixed scene specification
+`geographic-scene-renderer` 0.2.3 turns a verified, fixed scene specification
 into one of two deterministic clips, each no longer than six seconds:
 
 - `earth-to-location` introduces the episode's initial physical setting from a
@@ -46,7 +46,10 @@ Output is `scene.mp4`, three preview JPEGs, `contact-sheet.jpg`, and
 GiB free, an unsupported provider or location, ambiguous/unverified identity,
 inconsistent mode/timing, a destination outside its verified extent, a label or
 caption-safe collision, failed keyframe readiness, deficient capture cadence,
-black frames, or wrong encoded properties.
+black frames, less than 75% in-capture tile-ready samples, or wrong encoded
+properties. The queue ratio is recorded and complements—not replaces—frame
+inspection because Cesium can refine off-screen/next-level tiles while the
+visible globe remains complete.
 
 ## JSON contract
 

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export const TOOL_ID = 'geographic-scene-renderer';
-export const TOOL_VERSION = '0.2.2';
+export const TOOL_VERSION = '0.2.3';
 export const UPSTREAM_COMMIT = 'aa16b7c3b0166a89d8c7a6089e0aff53a22faaee';
 
 const MODES = new Set(['earth-to-location', 'location-to-location']);

@@ -66,8 +66,9 @@ function qualityChecks(mp4, properties, spec, tileSamples) {
   if(/black_start/.test(black)) throw new Error('blank/black frames detected');
   const during = tileSamples.filter((sample)=>sample.t>0);
   const loadedRatio = during.length ? during.filter((sample)=>sample.loaded).length/during.length : 0;
-  if(loadedRatio<.8 && !spec.testing) throw new Error(`scene data readiness fell below threshold (${(loadedRatio*100).toFixed(1)}%)`);
-  return {black_frame_scan:'passed',tile_ready_sample_ratio:Number(loadedRatio.toFixed(4))};
+  const minimumReadyRatio=.75;
+  if(loadedRatio<minimumReadyRatio && !spec.testing) throw new Error(`scene data readiness fell below threshold (${(loadedRatio*100).toFixed(1)}%)`);
+  return {black_frame_scan:'passed',tile_ready_sample_ratio:Number(loadedRatio.toFixed(4)),minimum_tile_ready_sample_ratio:minimumReadyRatio};
 }
 
 export async function render(specFile, outputDir, options = {}) {

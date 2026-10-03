@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build or send the bounded 0.2.2 owner-review bundle from inspected runs."""
+"""Build or send the bounded 0.2.3 owner-review bundle from inspected runs."""
 
 from __future__ import annotations
 
@@ -96,7 +96,7 @@ def main() -> int:
         run("ffmpeg", "-y", "-loglevel", "error", "-ss", "5.0", "-i", str(source),
             "-frames:v", "1", "-q:v", "2", str(frame))
         frames.append(frame)
-    contact = pending / "geographic-scene-renderer-v0.2.2-contact-sheet.jpg"
+    contact = pending / "geographic-scene-renderer-v0.2.3-contact-sheet.jpg"
     # Four arrival panels plus a native-resolution detail for edge/label inspection.
     run(
         "ffmpeg", "-y", "-loglevel", "error",
@@ -120,7 +120,7 @@ def main() -> int:
     for run_dir, label in zip(runs, labels, strict=True):
         shutil.copy2(run_dir / "output" / "manifest.json", reproduction / f"{label}-manifest.json")
 
-    body = f"""Hidden Order lab demonstration for feedback — geographic-scene-renderer 0.2.2
+    body = f"""Hidden Order lab demonstration for feedback — geographic-scene-renderer 0.2.3
 
 Run: {args.run_id}
 Tested tool commit: {args.commit}
@@ -131,7 +131,7 @@ Samples (silent, 6.0 seconds each):
 - earth-to-springfield-review-720x1280.mp4 — EARTH TO LOCATION, native portrait composition. Resolves the commonly duplicated Springfield name specifically to Springfield, Illinois, United States.
 - springfield-to-st-louis-review-1280x720.mp4 — LOCATION TO LOCATION, nearby landscape transition. Relates the already established Illinois capital to St. Louis without claiming a journey or route.
 - galle-to-mount-fuji-review-720x1280.mp4 — LOCATION TO LOCATION, long-distance portrait transition. Moves from established Galle to Mount Fuji as a genuine change of story setting.
-- geographic-scene-renderer-v0.2.2-contact-sheet.jpg — all four arrivals plus a full-resolution Galle detail for label/edge review.
+- geographic-scene-renderer-v0.2.3-contact-sheet.jpg — all four arrivals plus a full-resolution Galle detail for label/edge review.
 
 The destination arrives at 4.2 seconds and holds for 1.8 seconds. The 720p attachments are email copies; native 1920x1080 and 1080x1920 masters were separately validated.
 
