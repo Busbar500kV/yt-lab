@@ -113,8 +113,12 @@ async function startRecord() {
     context.drawImage(state.viewer.canvas, 0, 0, canvas.width, canvas.height);
     const scale = Math.max(1, Math.min(canvas.width, canvas.height) / 720); const pad = Math.round(9 * scale); const line = Math.round(30 * scale); context.textBaseline = 'bottom';
     const attribution = document.getElementById('attribution').textContent; const contextNote = document.getElementById('context-note').textContent;
-    context.font = `${Math.round(16 * scale)}px system-ui`; const attrWidth = Math.min(canvas.width - pad * 2, context.measureText(attribution).width + pad * 2); context.fillStyle = 'rgba(0,0,0,.74)'; context.fillRect(canvas.width - attrWidth - pad, canvas.height - line - pad, attrWidth, line); context.fillStyle = '#f5f7fa'; context.textAlign = 'right'; context.fillText(attribution, canvas.width - pad * 2, canvas.height - pad * 1.45);
-    context.font = `${Math.round(14 * scale)}px system-ui`; const noteWidth = context.measureText(contextNote).width + pad * 2; context.fillStyle = 'rgba(0,0,0,.65)'; context.fillRect(pad, canvas.height - line - pad, noteWidth, line); context.fillStyle = '#d6dce4'; context.textAlign = 'left'; context.fillText(contextNote, pad * 2, canvas.height - pad * 1.45);
+    const attrFont = `${Math.round(16 * scale)}px system-ui`; const noteFont = `${Math.round(14 * scale)}px system-ui`;
+    context.font = attrFont; const attrWidth = Math.min(canvas.width - pad * 2, context.measureText(attribution).width + pad * 2);
+    context.font = noteFont; const noteWidth = Math.min(canvas.width - pad * 2, context.measureText(contextNote).width + pad * 2);
+    const stacked = attrWidth + noteWidth + pad * 3 > canvas.width; const noteBottom = stacked ? canvas.height - line - pad * 2 : canvas.height - pad;
+    context.fillStyle = 'rgba(0,0,0,.74)'; context.fillRect(canvas.width - attrWidth - pad, canvas.height - line - pad, attrWidth, line); context.fillStyle = '#f5f7fa'; context.font = attrFont; context.textAlign = 'right'; context.fillText(attribution, canvas.width - pad * 2, canvas.height - pad * 1.45);
+    context.fillStyle = 'rgba(0,0,0,.65)'; context.fillRect(pad, noteBottom - line, noteWidth, line); context.fillStyle = '#d6dce4'; context.font = noteFont; context.textAlign = 'left'; context.fillText(contextNote, pad * 2, noteBottom - pad * .45);
     track.requestFrame(); state.record.frameTimes.push({ now: performance.now(), sceneSec });
   } };
   return type;

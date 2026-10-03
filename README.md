@@ -54,7 +54,7 @@ is inferred for a future tool.
 
 ## Candidate capability: geographic scene renderer
 
-`geographic-scene-renderer` 0.2.3 is an independent candidate with explicit
+`geographic-scene-renderer` 0.2.4 is an independent candidate with explicit
 Earth-to-location and location-to-location modes, fixed verified places, a
 six-second ceiling, narration anchors, brief labels, and native landscape or
 portrait composition. Episode Codex chooses scene purpose and timing; maps remain
