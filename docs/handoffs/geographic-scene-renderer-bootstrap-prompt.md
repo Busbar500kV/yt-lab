@@ -12,7 +12,7 @@ capability. Skip files or behavior already present. Do not copy or synchronize t
 whole `yt-lab` repository.
 
 The exact tested lab revision is
-`07f75964e49f2ff92cd656424368061905238c36`. The immutable version is
+`07f759667ed2c5bc19941fd77bb0365c31a2674c`. The immutable version is
 `tool/geographic-scene-renderer/v0.1.0`. The audited upstream revision is God's
 Eye View `aa16b7c3b0166a89d8c7a6089e0aff53a22faaee` (package 0.2.1).
 
