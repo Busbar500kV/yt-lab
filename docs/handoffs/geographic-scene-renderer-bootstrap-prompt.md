@@ -11,11 +11,11 @@ already present, report it and skip duplicate files or behavior. Integrate only
 the candidate capability with stable ID `geographic-scene-renderer`; never copy
 or synchronize the full `yt-lab` repository.
 
-Tested lab version: `0.2.4`
+Tested lab version: `0.2.5`
 
-Immutable tag: `tool/geographic-scene-renderer/v0.2.4`
+Immutable tag: `tool/geographic-scene-renderer/v0.2.5`
 
-Exact tested commit: `eebcbcf30f2f607f339631bf4fe0837efdf2f82b`
+Exact tested implementation commit: `641a60447bd5a4bd5a78e79a57de85aec6ae96b9`
 
 Pinned God's Eye View commit: `aa16b7c3b0166a89d8c7a6089e0aff53a22faaee`
 (upstream package 0.2.1)
@@ -41,8 +41,9 @@ Expose two explicit, scene-selected modes to Episode Codex:
    appropriate to the city, canyon, building, island, or region, and show a brief
    verified label.
 2. `location-to-location`: use for a meaningful change from the established
-   story location. Pull back as needed, move to the next verified place, and
-   arrive with a brief label. Do not restart from Earth.
+   story location. Show the brief verified start name on the opening footage,
+   clear it before the transfer completes, move to the next verified place, and
+   show its brief verified name at arrival. Do not restart from Earth.
 
 These are available creative treatments, not mandatory footage. Do not use them
 for every place-name mention, in episodes without a relevant physical setting,
@@ -69,8 +70,12 @@ result. Stop on unresolved same-name ambiguity or unsupported coverage.
 
 The scene spec must also contain the exact narration/dialogue anchor and intended
 timeline placement, provider/date settings, fixed camera keyframes/easing,
-destination hold, short display label, optional source-verified overlays,
-caption/branding safe zones, and native output geometry. Render 1920×1080
+destination hold, short display labels, optional source-verified overlays,
+caption/branding safe zones, and native output geometry. A location-to-location
+spec requires a start label that exactly matches the verified start identity,
+appears with the opening view, remains fully readable for at least 0.75 seconds,
+and clears before arrival; its destination label must match the verified
+destination and reveal at arrival. Render 1920×1080
 documentary and 1080×1920 short scenes independently; do not stretch or crop one
 from the other.
 
@@ -119,15 +124,16 @@ node tools/geographic-scene-renderer/src/cli.mjs render \
 
 Before enabling production, run production-local tests for both modes,
 six-second/hold bounds, narration anchor, ambiguity and coordinate validation,
-camera endpoints, labels, provider coverage/minimum extent, native 16:9/9:16,
-safe-zone collision, provider failure, deterministic timing, source/provenance,
+camera endpoints, both verified transition labels, opening/readability/clearance
+timing, provider coverage/minimum extent, native 16:9/9:16, safe-zone collision
+for both endpoint compositions, provider failure, deterministic timing, source/provenance,
 dimensions/duration/frame count, H.264/yuv420p/fast-start, blank frames, and tile
 readiness. Render and inspect both aspect ratios, Earth and subsequent-location
 moves, nearby and long transitions, and one correctly disambiguated duplicate
 name.
 
 Inspect actual clips at normal speed on a display and at phone size, plus start,
-movement, arrival, hold, and dense sampled frames. Confirm geography, labels,
+start-label fade, movement, arrival, hold, and dense sampled frames. Confirm geography, both endpoint labels,
 attribution, motion comfort, tile completeness, safe areas, and narration fit.
 Retain the existing accessibility, provenance, deduplication, owner-review,
 episode-approval, release, and publication gates.
