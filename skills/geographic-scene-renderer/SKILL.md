@@ -15,8 +15,10 @@ extent, and timing; this renderer executes the fixed specification.
   initial physical setting. Begin with recognizable Earth and finish with enough
   surrounding geography to understand the feature.
 - Use `location-to-location` for a genuine change from the already established
-  story location. Pull back only as far as needed, transfer, and arrive. Use it
-  for a useful return to an earlier place, not every name mention.
+  story location. Show its brief verified name on the opening view, clear that
+  label before transfer, and show the destination's brief verified name at
+  arrival. Pull back only as far as needed. Use it for a useful return to an
+  earlier place, not every name mention.
 - If the path would feel frantic within six seconds, simplify its keyframes or
   widen the destination framing. Never exceed six seconds or imply an actual
   journey, historical route, or event movement without source support.
@@ -30,8 +32,9 @@ extent, and timing; this renderer executes the fixed specification.
    Mark ambiguity `resolved` with a note, or stop. Never take the first geocoder
    hit silently.
 3. Fix the verified coordinates in the JSON. Rendering must not geocode again.
-4. Use a short display label such as `Galle, Sri Lanka`. Keep the full identity
-   and verification only in provenance.
+4. Use short display labels such as `Galle, Sri Lanka`. A location-to-location
+   spec must bind both endpoint labels to their verified identities; keep full
+   descriptions and verification only in provenance.
 5. Record the exact narration/dialogue anchor and intended placement. Treat
    modern imagery as modern context, not historical evidence.
 
@@ -69,7 +72,8 @@ arrival, and hold frames plus a dense sequence and phone-size views. Confirm:
 - Earth is recognizable in the initial mode, while subsequent moves do not
   unnecessarily restart there;
 - movement is comfortable, continuous, and free of missing-tile flashes;
-- destination geography remains recognizable and the brief label is readable;
+- both endpoint labels are readable at their respective opening and arrival
+  views, with the start label cleared before the transfer completes;
 - caption/branding zones stay clear and attribution remains legible;
 - current imagery is not presented as a historical condition;
 - the clip is at most six seconds and the destination hold is useful.
@@ -80,7 +84,7 @@ email acceptance, owner acceptance, and production integration into one status.
 
 ## Limits
 
-Version 0.2.4 has no geocoder, automatic extent selection, route generation,
+Version 0.2.5 has no geocoder, automatic extent selection, route generation,
 historical imagery, event reconstruction, live tracking, voice control, or paid
 provider. Live dependencies may change and are not byte-identically reproducible.
 Human editorial review remains required for location meaning, framing, labels,

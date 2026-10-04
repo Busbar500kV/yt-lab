@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build or send the bounded 0.2.4 owner-review bundle from inspected runs."""
+"""Build or send the bounded 0.2.5 endpoint-label revision review bundle."""
 
 from __future__ import annotations
 
@@ -52,8 +52,6 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--commit", required=True)
-    parser.add_argument("--galle-run", type=Path, required=True)
-    parser.add_argument("--springfield-run", type=Path, required=True)
     parser.add_argument("--nearby-run", type=Path, required=True)
     parser.add_argument("--long-run", type=Path, required=True)
     parser.add_argument("--smtp-config", type=Path)
@@ -68,22 +66,17 @@ def main() -> int:
     pending.mkdir(parents=True, exist_ok=True)
     pending.chmod(0o700)
 
-    runs = [
-        args.galle_run.resolve(), args.springfield_run.resolve(),
-        args.nearby_run.resolve(), args.long_run.resolve(),
-    ]
+    runs = [args.nearby_run.resolve(), args.long_run.resolve()]
     source_videos = [item / "output" / "scene.mp4" for item in runs]
     for video in source_videos:
         if not video.is_file():
             raise SystemExit(f"missing inspected video: {video}")
 
     names = [
-        "earth-to-galle-review-1280x720.mp4",
-        "earth-to-springfield-review-720x1280.mp4",
-        "springfield-to-st-louis-review-1280x720.mp4",
-        "galle-to-mount-fuji-review-720x1280.mp4",
+        "springfield-to-st-louis-dual-label-review-1280x720.mp4",
+        "galle-to-mount-fuji-dual-label-review-720x1280.mp4",
     ]
-    sizes = [(1280, 720), (720, 1280), (1280, 720), (720, 1280)]
+    sizes = [(1280, 720), (720, 1280)]
     videos: list[Path] = []
     for source, name, (width, height) in zip(source_videos, names, sizes, strict=True):
         target = pending / name
@@ -92,19 +85,20 @@ def main() -> int:
 
     frames: list[Path] = []
     for index, source in enumerate(source_videos):
-        frame = pending / f"contact-{index}.jpg"
-        run("ffmpeg", "-y", "-loglevel", "error", "-ss", "5.0", "-i", str(source),
-            "-frames:v", "1", "-q:v", "2", str(frame))
-        frames.append(frame)
-    contact = pending / "geographic-scene-renderer-v0.2.4-contact-sheet.jpg"
-    # Four arrival panels plus a native-resolution detail for edge/label inspection.
+        for stage, at in (("start", "0.45"), ("arrival", "5.0")):
+            frame = pending / f"contact-{index}-{stage}.jpg"
+            run("ffmpeg", "-y", "-loglevel", "error", "-ss", at, "-i", str(source),
+                "-frames:v", "1", "-q:v", "2", str(frame))
+            frames.append(frame)
+    contact = pending / "geographic-scene-renderer-v0.2.5-dual-label-contact-sheet.jpg"
+    # Each transition's start and arrival, plus a full-resolution start-label detail.
     run(
         "ffmpeg", "-y", "-loglevel", "error",
         "-i", str(frames[0]), "-i", str(frames[1]), "-i", str(frames[2]),
         "-i", str(frames[3]), "-i", str(frames[0]), "-filter_complex",
-        "[0:v]scale=640:360[a];[1:v]scale=203:360[b];[2:v]scale=640:360[c];"
+        "[0:v]scale=640:360[a];[1:v]scale=640:360[b];[2:v]scale=203:360[c];"
         "[3:v]scale=203:360[d];[4:v]crop=640:360:640:360[e];"
-        "[a][b][c][d][e]xstack=inputs=5:layout=0_0|650_0|863_0|1513_0|436_370:"
+        "[a][b][c][d][e]xstack=inputs=5:layout=0_0|650_0|1300_0|1513_0|436_370:"
         "fill=0x111111[out]", "-map", "[out]", "-frames:v", "1", "-q:v", "3",
         str(contact),
     )
@@ -116,38 +110,36 @@ def main() -> int:
     shutil.copy2(prompt, prompt_copy)
     reproduction = pending / "reproduction"
     reproduction.mkdir()
-    labels = ("earth-galle", "earth-springfield", "springfield-st-louis", "galle-fuji")
+    labels = ("springfield-st-louis", "galle-fuji")
     for run_dir, label in zip(runs, labels, strict=True):
         shutil.copy2(run_dir / "output" / "manifest.json", reproduction / f"{label}-manifest.json")
 
-    body = f"""Hidden Order lab demonstration for feedback — geographic-scene-renderer 0.2.4
+    body = f"""Hidden Order lab revision for feedback — geographic-scene-renderer 0.2.5
 
 Run: {args.run_id}
 Tested tool commit: {args.commit}
 Status: PREPARED FOR REVIEW — NOT AUTHORIZED FOR INTEGRATION
 
-Samples (silent, 6.0 seconds each):
-- earth-to-galle-review-1280x720.mp4 — EARTH TO LOCATION, native landscape source composition. Introduces Galle on Sri Lanka's southwest coast for the first physical-location narration.
-- earth-to-springfield-review-720x1280.mp4 — EARTH TO LOCATION, native portrait composition. Resolves the commonly duplicated Springfield name specifically to Springfield, Illinois, United States.
-- springfield-to-st-louis-review-1280x720.mp4 — LOCATION TO LOCATION, nearby landscape transition. Relates the already established Illinois capital to St. Louis without claiming a journey or route.
-- galle-to-mount-fuji-review-720x1280.mp4 — LOCATION TO LOCATION, long-distance portrait transition. Moves from established Galle to Mount Fuji as a genuine change of story setting.
-- geographic-scene-renderer-v0.2.4-contact-sheet.jpg — all four arrivals plus a full-resolution Galle detail for label/edge review.
+Revised samples (silent, 6.0 seconds each):
+- springfield-to-st-louis-dual-label-review-1280x720.mp4 — LOCATION TO LOCATION, nearby native landscape transition. The opening footage says “Springfield, Illinois”; that label clears before transfer; arrival says “St. Louis, Missouri.”
+- galle-to-mount-fuji-dual-label-review-720x1280.mp4 — LOCATION TO LOCATION, substantial native portrait transition. The opening footage says “Galle, Sri Lanka”; that label clears before transfer; arrival says “Mount Fuji, Japan.”
+- geographic-scene-renderer-v0.2.5-dual-label-contact-sheet.jpg — opening and arrival frames for both transitions, plus a native-resolution Springfield start-label detail.
 
-The destination arrives at 4.2 seconds and holds for 1.8 seconds. The 720p attachments are email copies; native 1920x1080 and 1080x1920 masters were separately validated.
+The start label is fully readable for 0.95 seconds and clears at 1.20 seconds. The destination arrives at 4.2 seconds and holds for 1.8 seconds. The 720p attachments are email copies; native 1920x1080 and 1080x1920 masters were separately validated.
 
 Sources/permissions/cost: NASA EOSDIS GIBS Blue Marble is a fixed 2004 worldwide composite used for regional geographic context under NASA Earthdata's open-data policy with acknowledgement. USGS National Map imagery is public-domain U.S. government data with acknowledgement. Re:Earth/Mapterhorn terrain is CC BY 4.0. Required attribution is burned in. No keys, paid API, billing, or provider charge were used.
 
-Checks completed: 14 Node tests plus fake-transport duplicate-prevention; both modes; six-second/hold limits; narration anchors; verified location identity/ambiguity/extents; camera endpoints; labels; provider coverage/minimum framing; native aspect ratios; safe zones; provider failure; deterministic interpolation; H.264/yuv420p/fast-start dimensions, duration and frame count; blank-frame and tile-readiness gates. Four native masters were inspected at start, movement, arrival and hold, as dense sequences, and at phone size. Real-time decode was exercised at normal speed on this headless host; visual inspection used frames because no human display was available.
+Checks completed: schema and render tests plus fake-transport duplicate prevention; both modes; six-second/hold limits; narration anchors; verified location identity/ambiguity/extents; camera endpoints; required start and destination labels; label timing and safe-zone checks; provider coverage/minimum framing; native aspect ratios; provider failure; deterministic interpolation; H.264/yuv420p/fast-start dimensions, duration and frame count; blank-frame and tile-readiness gates. Both revised native masters were inspected at start, label fade, movement, arrival and hold, as dense sequences and at phone size. Real-time decode was exercised at normal speed on this headless host; visual inspection used frames because no human display was available.
 
 Known limits: NASA Blue Marble is regional context, not city/building detail, and the tool rejects closer than 120 km with that provider. USGS close detail is bounded to the contiguous United States. Remote terrain/provider availability can change, so byte-identical rerenders are not promised. Human editorial review is still required; these maps are not evidence of historical conditions or actual travel.
 
 Reproduce one sample:
-node tools/geographic-scene-renderer/src/cli.mjs render tools/geographic-scene-renderer/examples/earth-to-galle-landscape.json runtime/geographic-scene-renderer/runs/review-reproduction/output
+node tools/geographic-scene-renderer/src/cli.mjs render tools/geographic-scene-renderer/examples/springfield-to-st-louis-landscape.json runtime/geographic-scene-renderer/runs/review-reproduction/output
 
 Feedback:
-1. Is the correct location immediately obvious in each mode?
-2. Is the movement comfortable and the destination hold useful?
-3. Are the geography, brief label, and attribution readable on a phone?
+1. Are both the starting and destination locations immediately obvious?
+2. Does the start-label fade leave the movement comfortable and uncluttered?
+3. Are both labels, geography, and attribution readable on a phone?
 
 Local retention: after SMTP acceptance, full-resolution working renders and disposable caches are removed. The latest compact accepted bundle is retained under the 25 MiB cap with private send state and compact reproduction records. It becomes eligible for deletion after seven days on a later lab invocation; no unattended expiry service exists.
 

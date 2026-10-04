@@ -1,6 +1,6 @@
 # God's Eye View and provider audit
 
-Audited 2026-10-03 for `geographic-scene-renderer` 0.2.4.
+Audited 2026-10-03 and rechecked unchanged for `geographic-scene-renderer` 0.2.5.
 
 ## Upstream pin and selected surface
 
@@ -31,7 +31,7 @@ does not assemble screenshots or retain an uncompressed frame sequence.
 The MIT licence covers code, not imagery or datasets. The adapter does not expose
 the upstream TeleGeography or Bhote Koshi/GeoPera non-commercial data.
 
-Admitted 0.2.4 sources are:
+Admitted 0.2.5 sources are:
 
 - **NASA EOSDIS GIBS — Blue Marble Next Generation.** The WMTS layer is a
   worldwide 2004 monthly composite, used as fixed modern geographic context.

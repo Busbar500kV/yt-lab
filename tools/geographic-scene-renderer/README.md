@@ -1,16 +1,17 @@
 # Geographic scene renderer
 
-`geographic-scene-renderer` 0.2.4 turns a verified, fixed scene specification
+`geographic-scene-renderer` 0.2.5 turns a verified, fixed scene specification
 into one of two deterministic clips, each no longer than six seconds:
 
 - `earth-to-location` introduces the episode's initial physical setting from a
   recognizable Earth view.
-- `location-to-location` pulls back from an established place and moves to a
-  meaningful next setting without implying a journey or historical route.
+- `location-to-location` names the established place on the opening footage,
+  clears that label before transfer, then names the meaningful next setting at
+  arrival without implying a journey or historical route.
 
 The terminal adapter produces a native landscape or portrait H.264/yuv420p
 fast-start MP4, preview frames, a contact sheet, and a hashed manifest. It adds
-only a brief destination label, modern-context note, required attribution, and
+brief endpoint labels, a modern-context note, required attribution, and
 optional source-verified geographic overlays. It does not geocode, invent
 routes, reconstruct events, use voice AI, or call paid services.
 
@@ -68,6 +69,8 @@ Coordinates are decimal WGS84 `lat`/`lon`; overlay point arrays are explicit
   and imagery-date disclosure.
 - `camera`: fixed, increasing keyframes and `linear` or `cubic-in-out` easing.
   Arrival must leave 1.5–2.25 seconds of destination hold.
+- `start_label`: required only for `location-to-location`; an exact verified
+  brief label visible on the opening location and cleared before arrival.
 - `destination_label`: exact verified brief label and arrival-bound fade.
 - `overlays`: optional verified route or boundary only; no inferred connections.
 - `caption_safe_zones`: normalized rectangles kept clear of the destination
@@ -103,7 +106,7 @@ npm test
 
 The deterministic end-to-end fixture uses a generated grid and ellipsoid. Tests
 cover both modes, six-second/hold timing, location ambiguity and extents, camera
-endpoints, provider coverage and minimum range, labels, native formats, safe
+endpoints, provider coverage and minimum range, both transition labels, native formats, safe
 zones, failure paths, deterministic interpolation, H.264/yuv420p/fast-start,
 frame count, cleanup-safe active markers, and mail duplicate prevention.
 

@@ -33,6 +33,7 @@
       {"at_sec": 2.85, "view": {"lat": 24, "lon": 113, "range_m": 9500000, "heading_deg": 0, "pitch_deg": -88}},
       {"at_sec": 4.2, "view": {"lat": 35.360556, "lon": 138.7275, "range_m": 140000, "heading_deg": 18, "pitch_deg": -56}}
   ]},
+  "start_label": {"text": "Galle, Sri Lanka", "reveal_at_sec": 0, "fade_in_sec": 0, "hide_at_sec": 0.95, "fade_out_sec": 0.25, "color": "#72d6ff"},
   "destination_label": {"text": "Mount Fuji, Japan", "reveal_at_sec": 4.2, "fade_in_sec": 0.25, "fade_out_sec": 0, "color": "#ffd65a"},
   "caption_safe_zones": [{"id": "top-brand", "x": 0.06, "y": 0.03, "width": 0.88, "height": 0.12}, {"id": "bottom-captions", "x": 0.06, "y": 0.78, "width": 0.88, "height": 0.16}],
   "overlays": [],

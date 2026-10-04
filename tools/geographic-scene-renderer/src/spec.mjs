@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export const TOOL_ID = 'geographic-scene-renderer';
-export const TOOL_VERSION = '0.2.4';
+export const TOOL_VERSION = '0.2.5';
 export const UPSTREAM_COMMIT = 'aa16b7c3b0166a89d8c7a6089e0aff53a22faaee';
 
 const MODES = new Set(['earth-to-location', 'location-to-location']);
@@ -156,6 +156,15 @@ function verifiedOverlay(value, field, duration) {
   return { type, label: text(value.label, `${field}.label`, 42), source_url: text(value.source_url, `${field}.source_url`), verified: true, reveal_at_sec: finite(value.reveal_at_sec ?? 0, `${field}.reveal_at_sec`, 0, duration), color, points: value.points.map((point, i) => { if (!Array.isArray(point) || point.length !== 2) throw new Error(`${field}.points[${i}] must be [lon, lat]`); return [finite(point[0], `${field}.points[${i}][0]`, -180, 180), finite(point[1], `${field}.points[${i}][1]`, -90, 90)]; }) };
 }
 
+function labelStyle(value, field, locationValue) {
+  const label = object(value, field);
+  const labelText = text(label.text, `${field}.text`, 42);
+  if (labelText !== locationValue.display_label) throw new Error(`${field} must match the verified brief display label`);
+  const color = label.color ?? '#ffd65a';
+  if (!/^#[0-9a-f]{6}$/i.test(color)) throw new Error(`${field}.color must be #RRGGBB`);
+  return { label, labelText, color };
+}
+
 export function normalizeSpec(raw) {
   object(raw, 'specification');
   if (raw.schema_version !== 2) throw new Error('schema_version must be 2');
@@ -214,13 +223,27 @@ export function normalizeSpec(raw) {
     if (maxRange < Math.max(keyframes[0].view.range_m, last.range_m) * 1.25) throw new Error('location-to-location must pull back enough to explain the geographic change');
   }
 
-  const label = object(raw.destination_label, 'destination_label'); const labelText = text(label.text, 'destination_label.text', 42);
-  if (labelText !== destination.display_label) throw new Error('destination label must match the verified brief display label');
+  let startLabel = null;
+  if (mode === 'earth-to-location' && raw.start_label !== undefined) throw new Error('earth-to-location must not define a start_label');
+  if (mode === 'location-to-location') {
+    const start = byId.get(startId); const parsed = labelStyle(raw.start_label, 'start_label', start); const label = parsed.label;
+    const reveal = finite(label.reveal_at_sec, 'start_label.reveal_at_sec', 0, duration);
+    const fadeIn = finite(label.fade_in_sec ?? 0, 'start_label.fade_in_sec', 0, .25);
+    const hide = finite(label.hide_at_sec, 'start_label.hide_at_sec', 0, duration);
+    const fadeOut = finite(label.fade_out_sec ?? .25, 'start_label.fade_out_sec', 0, .75);
+    if (reveal > .2) throw new Error('start_label must appear with the established opening location');
+    if (hide - reveal - fadeIn < .75) throw new Error('start_label must remain fully readable for at least 0.75 seconds');
+    if (hide + fadeOut > arrival - .5) throw new Error('start_label must clear before destination arrival');
+    startLabel = { text: parsed.labelText, reveal_at_sec: reveal, fade_in_sec: fadeIn, hide_at_sec: hide, fade_out_sec: fadeOut, color: parsed.color };
+  }
+
+  const parsedDestination = labelStyle(raw.destination_label, 'destination_label', destination); const label = parsedDestination.label;
+  const labelText = parsedDestination.labelText;
   const reveal = finite(label.reveal_at_sec, 'destination_label.reveal_at_sec', 0, duration);
   if (reveal < arrival - .25 || reveal > arrival + .35) throw new Error('destination label must reveal at arrival');
   const fadeIn = finite(label.fade_in_sec ?? .25, 'destination_label.fade_in_sec', 0, .75); const fadeOut = finite(label.fade_out_sec ?? 0, 'destination_label.fade_out_sec', 0, .75);
   if (reveal + fadeIn > duration - 1) throw new Error('destination label is not readable for at least one second');
-  const color = label.color ?? '#ffd65a'; if (!/^#[0-9a-f]{6}$/i.test(color)) throw new Error('destination_label.color must be #RRGGBB');
+  const color = parsedDestination.color;
   const safeZones = (raw.caption_safe_zones ?? []).map((item, i) => safeZone(item, `caption_safe_zones[${i}]`));
   for (const zone of safeZones) if (zone.x <= .5 && zone.x + zone.width >= .5 && zone.y <= .5 && zone.y + zone.height >= .5) throw new Error(`caption safe zone ${zone.id} obscures the destination point at frame centre`);
   const overlays = (raw.overlays ?? []).map((item, i) => verifiedOverlay(item, `overlays[${i}]`, duration));
@@ -231,6 +254,7 @@ export function normalizeSpec(raw) {
     geography: { locations, start_location_id: startId, destination_id: destinationId },
     providers: { imagery: { id: providers.imagery, ...imagery }, terrain: { id: providers.terrain, ...terrain }, permitted_layers: [...new Set(layers)], imagery_date: text(providers.imagery_date, 'providers.imagery_date', 200), retrieved_on: text(providers.retrieved_on, 'providers.retrieved_on', 32) },
     camera: { easing: camera.easing, keyframes },
+    start_label: startLabel,
     destination_label: { text: labelText, reveal_at_sec: reveal, fade_in_sec: fadeIn, fade_out_sec: fadeOut, color }, overlays, caption_safe_zones: safeZones,
     output: { format, width, height, fps, duration_sec: duration, codec: 'h264', pixel_format: 'yuv420p', fast_start: true, crf: finite(output.crf ?? 20, 'output.crf', 15, 35), capture_slowdown: finite(output.capture_slowdown ?? 1, 'output.capture_slowdown', 1, 8) },
   };

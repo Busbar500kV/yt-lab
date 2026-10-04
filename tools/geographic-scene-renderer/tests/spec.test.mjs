@@ -16,6 +16,7 @@ const secondLocation = () => ({
 function locationTransition() {
   const raw = clone(); raw.mode = 'location-to-location'; raw.editorial.anchor.intended_placement = 'meaningful-location-change';
   raw.geography.locations.push(secondLocation()); raw.geography.start_location_id = 'start';
+  raw.start_label = { text: 'Start Place', reveal_at_sec: 0, fade_in_sec: 0, hide_at_sec: .85, fade_out_sec: .15, color: '#72d6ff' };
   raw.camera.keyframes = [
     { at_sec: 0, view: { lat: 45.5, lon: -121.5, range_m: 100000, heading_deg: 0, pitch_deg: -60 } },
     { at_sec: .75, view: { lat: 45.8, lon: -121.8, range_m: 700000, heading_deg: 0, pitch_deg: -75 } },
@@ -34,7 +35,16 @@ test('earth-to-location keeps fixed anchor, provider, format, and endpoints', ()
 test('location-to-location requires a verified start, pullback, and destination endpoint', () => {
   const spec = normalizeSpec(locationTransition());
   assert.equal(spec.mode, 'location-to-location'); assert.equal(spec.geography.start_location_id, 'start');
+  assert.equal(spec.start_label.text, 'Start Place'); assert.equal(spec.destination_label.text, 'Fixture Point');
   assert.equal(sampleTimeline(spec, 0).view.lat, 45.5); assert.equal(sampleTimeline(spec, 2.5).phase, 'destination-hold');
+});
+
+test('location-to-location requires readable verified endpoint labels with no overlap', () => {
+  const missing = locationTransition(); delete missing.start_label; assert.throws(() => normalizeSpec(missing), /start_label must be an object/);
+  const wrong = locationTransition(); wrong.start_label.text = 'Wrong Start'; assert.throws(() => normalizeSpec(wrong), /start_label must match/);
+  const tooBrief = locationTransition(); tooBrief.start_label.hide_at_sec = .5; assert.throws(() => normalizeSpec(tooBrief), /fully readable/);
+  const overlaps = locationTransition(); overlaps.start_label.hide_at_sec = 1.1; overlaps.start_label.fade_out_sec = .2; assert.throws(() => normalizeSpec(overlaps), /clear before destination/);
+  const earth = clone(); earth.start_label = { text: 'Fixture Point' }; assert.throws(() => normalizeSpec(earth), /must not define a start_label/);
 });
 
 test('six-second maximum and destination hold bounds are enforced', () => {

@@ -1,5 +1,5 @@
 /* global Cesium */
-const state = { viewer: null, spec: null, tileSamples: [], record: null, destinationEntity: null, pendingTiles: null };
+const state = { viewer: null, spec: null, tileSamples: [], record: null, labelEntities: {}, pendingTiles: null };
 
 function hex(value, alpha = 1) { return Cesium.Color.fromCssColorString(value).withAlpha(alpha); }
 function radians(value) { return Cesium.Math.toRadians(value); }
@@ -21,23 +21,25 @@ function setView(view) {
   state.viewer.scene.requestRender();
 }
 
-function labelAlpha(seconds) {
-  const label = state.spec.destination_label;
+function labelAlpha(label, seconds) {
   if (seconds < label.reveal_at_sec) return 0;
   let alpha = label.fade_in_sec ? Math.min(1, (seconds - label.reveal_at_sec) / label.fade_in_sec) : 1;
-  if (label.fade_out_sec && seconds > state.spec.output.duration_sec - label.fade_out_sec) alpha = Math.min(alpha, (state.spec.output.duration_sec - seconds) / label.fade_out_sec);
+  const fadeOutStart = label.hide_at_sec ?? (state.spec.output.duration_sec - label.fade_out_sec);
+  if (label.fade_out_sec && seconds > fadeOutStart) alpha = Math.min(alpha, 1 - (seconds - fadeOutStart) / label.fade_out_sec);
   return Math.max(0, Math.min(1, alpha));
 }
 
-function addDestinationLabel() {
-  const location = state.spec.geography.locations.find((item) => item.id === state.spec.geography.destination_id);
+function addLocationLabel(key, locationId, label) {
+  if (!label) return;
+  const location = state.spec.geography.locations.find((item) => item.id === locationId);
   const fontPx = Math.max(22, Math.min(30, Math.round(state.spec.output.width / 72)));
-  state.destinationEntity = state.viewer.entities.add({
+  const entity = state.viewer.entities.add({
     position: Cesium.Cartesian3.fromDegrees(location.lon, location.lat, 0),
-    point: { pixelSize: 15, color: hex(state.spec.destination_label.color, 0), outlineColor: hex('#000000', 0), outlineWidth: 3, disableDepthTestDistance: Number.POSITIVE_INFINITY },
-    label: { text: state.spec.destination_label.text, font: `600 ${fontPx}px system-ui`, fillColor: Cesium.Color.WHITE.withAlpha(0), outlineColor: Cesium.Color.BLACK.withAlpha(0), outlineWidth: 5, style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -34), verticalOrigin: Cesium.VerticalOrigin.BOTTOM, disableDepthTestDistance: Number.POSITIVE_INFINITY, showBackground: true, backgroundColor: Cesium.Color.BLACK.withAlpha(0), backgroundPadding: new Cesium.Cartesian2(9, 6) },
+    point: { pixelSize: 15, color: hex(label.color, 0), outlineColor: hex('#000000', 0), outlineWidth: 3, disableDepthTestDistance: Number.POSITIVE_INFINITY },
+    label: { text: label.text, font: `600 ${fontPx}px system-ui`, fillColor: Cesium.Color.WHITE.withAlpha(0), outlineColor: Cesium.Color.BLACK.withAlpha(0), outlineWidth: 5, style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -34), verticalOrigin: Cesium.VerticalOrigin.BOTTOM, disableDepthTestDistance: Number.POSITIVE_INFINITY, showBackground: true, backgroundColor: Cesium.Color.BLACK.withAlpha(0), backgroundPadding: new Cesium.Cartesian2(9, 6) },
   });
-  state.destinationEntity.show = false;
+  entity.show = false;
+  state.labelEntities[key] = { entity, label };
 }
 
 function addVerifiedOverlays() {
@@ -49,13 +51,15 @@ function addVerifiedOverlays() {
 }
 
 function updateOverlays(seconds) {
-  const alpha = labelAlpha(seconds); const entity = state.destinationEntity;
-  entity.show = alpha > .001;
-  entity.point.color = hex(state.spec.destination_label.color, alpha);
-  entity.point.outlineColor = Cesium.Color.BLACK.withAlpha(alpha);
-  entity.label.fillColor = Cesium.Color.WHITE.withAlpha(alpha);
-  entity.label.outlineColor = Cesium.Color.BLACK.withAlpha(alpha);
-  entity.label.backgroundColor = Cesium.Color.BLACK.withAlpha(.68 * alpha);
+  for (const { entity, label } of Object.values(state.labelEntities)) {
+    const alpha = labelAlpha(label, seconds);
+    entity.show = alpha > .001;
+    entity.point.color = hex(label.color, alpha);
+    entity.point.outlineColor = Cesium.Color.BLACK.withAlpha(alpha);
+    entity.label.fillColor = Cesium.Color.WHITE.withAlpha(alpha);
+    entity.label.outlineColor = Cesium.Color.BLACK.withAlpha(alpha);
+    entity.label.backgroundColor = Cesium.Color.BLACK.withAlpha(.68 * alpha);
+  }
   for (const item of state.spec.overlays) if (item._entity) item._entity.show = seconds >= item.reveal_at_sec;
 }
 
@@ -100,7 +104,9 @@ async function setup(spec) {
   state.viewer.clock.currentTime = Cesium.JulianDate.fromIso8601('2026-06-21T19:00:00Z');
   document.getElementById('attribution').textContent = `${spec.providers.imagery.attribution} · ${spec.providers.terrain.attribution}`;
   document.getElementById('context-note').textContent = spec.editorial.context_note;
-  addDestinationLabel(); addVerifiedOverlays(); setView(timeline(0)); updateOverlays(0); await warm();
+  addLocationLabel('start', spec.geography.start_location_id, spec.start_label);
+  addLocationLabel('destination', spec.geography.destination_id, spec.destination_label);
+  addVerifiedOverlays(); setView(timeline(0)); updateOverlays(0); await warm();
   return { ready: true, webgl: state.viewer.scene.context.webgl2 ? 'WebGL 2' : 'WebGL 1', renderer: state.viewer.scene.context._gl.getParameter(state.viewer.scene.context._gl.RENDERER) };
 }
 
@@ -136,11 +142,17 @@ async function stopRecord() {
   return { base64: btoa(binary), bytes: bytes.length, type: state.record.type, tile_samples: state.tileSamples, captured_frames: state.record.frameTimes.length, max_frame_gap_ms: pairs.length ? Math.max(...pairs.map((value) => value.gap)) : null, max_motion_gap_ms: motion.length ? Math.max(...motion.map((value) => value.gap)) : null };
 }
 
-function projectDestination() {
-  const location = state.spec.geography.locations.find((item) => item.id === state.spec.geography.destination_id); setView(state.spec.camera.keyframes.at(-1).view); state.viewer.scene.render();
+function projectLabel(locationId, label, view) {
+  const location = state.spec.geography.locations.find((item) => item.id === locationId); setView(view); state.viewer.scene.render();
   const point = Cesium.SceneTransforms.worldToWindowCoordinates(state.viewer.scene, Cesium.Cartesian3.fromDegrees(location.lon, location.lat, 0)); if (!point) return null;
-  const fontPx = Math.max(22, Math.min(30, Math.round(state.spec.output.width / 72))); const labelWidth = Math.min(state.spec.output.width * .45, state.spec.destination_label.text.length * fontPx * .64 + 24);
+  const fontPx = Math.max(22, Math.min(30, Math.round(state.spec.output.width / 72))); const labelWidth = Math.min(state.spec.output.width * .45, label.text.length * fontPx * .64 + 24);
   return { x: point.x, y: point.y, label: { left: point.x - labelWidth / 2, right: point.x + labelWidth / 2, top: point.y - 34 - fontPx - 18, bottom: point.y - 24 } };
 }
 
-window.geoScene = { setup, startRecord, animate, stopRecord, waitTiles, projectDestination, tileSamples: () => state.tileSamples };
+function projectLabels() {
+  const destination = projectLabel(state.spec.geography.destination_id, state.spec.destination_label, state.spec.camera.keyframes.at(-1).view);
+  const start = state.spec.start_label ? projectLabel(state.spec.geography.start_location_id, state.spec.start_label, state.spec.camera.keyframes[0].view) : null;
+  return { start, destination };
+}
+
+window.geoScene = { setup, startRecord, animate, stopRecord, waitTiles, projectLabels, tileSamples: () => state.tileSamples };
