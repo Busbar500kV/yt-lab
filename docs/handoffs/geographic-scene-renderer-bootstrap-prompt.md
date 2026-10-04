@@ -17,6 +17,8 @@ Immutable tag: `tool/geographic-scene-renderer/v0.2.5`
 
 Exact tested implementation commit: `641a60447bd5a4bd5a78e79a57de85aec6ae96b9`
 
+Exact review-render snapshot: `8594d66379b90ad7c1bbd9f90091624d8ca79844`
+
 Pinned God's Eye View commit: `aa16b7c3b0166a89d8c7a6089e0aff53a22faaee`
 (upstream package 0.2.1)
 
