@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-03",
+  "updated_at": "2026-10-04",
   "tools": [
     {
       "tool_id": "animated-feature-highlighter",
@@ -27,12 +27,12 @@
       "upstream_repository": "https://github.com/bilawalsidhu/gods-eye-view",
       "upstream_commit": "aa16b7c3b0166a89d8c7a6089e0aff53a22faaee",
       "release_tag": "tool/geographic-scene-renderer/v0.2.4",
-      "status": "technically_tested",
+      "status": "emailed_for_owner_review",
       "lifecycle": {
         "experimental": "2026-10-03",
         "technically_tested": "2026-10-03",
-        "visually_inspected": null,
-        "emailed_for_owner_review": null,
+        "visually_inspected": "2026-10-04",
+        "emailed_for_owner_review": "2026-10-04",
         "owner_accepted": null,
         "integrated_into_production": null
       },
